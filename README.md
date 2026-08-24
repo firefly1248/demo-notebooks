@@ -26,14 +26,17 @@ About five minutes on a free Colab CPU.
 ## catboost_sglb_knowledge_uncertainty
 
 `posterior_sampling=True` plus `virtual_ensembles_predict` reports knowledge uncertainty from a
-single model. This notebook measures that signal against the truth: the data comes from a known 2D
-function, so every test point has both a reported uncertainty and a real error.
+single model. This notebook measures that signal against the truth: the data comes from a known and
+bounded 2D function, so every test point has both a reported uncertainty and a real error, and no
+region is intrinsically harder to predict than another.
 
-In a gap cut out of the training data the model is 21x more wrong than on covered data while the
-signal rises 1.8x. Eight units past the edge of the range the model is 95x more wrong, and on 4 of
-10 seeds the signal stays under 1.5x. Ten independently trained models track the gap closely and
-are no more dependable past the edge.
+Both uncertainty columns are variances, so the notebook square-roots them before comparing them
+with an error in the units of the target. In a gap cut out of the training data the model is 8.2x
+more wrong than on covered data while the reported uncertainty is 1.1x. Past the edge of the range
+the error is 20x, the signal is one constant across all 800 test points, and the total uncertainty
+comes to 0.66x, below the covered level on all ten runs. A nearest-neighbour distance to the
+training set ranks the error at 0.78 against 0.00 for knowledge uncertainty.
 
 ![knowledge uncertainty against error](figures/catboost_sglb_knowledge_uncertainty.png)
 
-About two minutes on a free Colab CPU.
+About a minute on a free Colab CPU.
