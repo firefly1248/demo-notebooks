@@ -54,7 +54,7 @@ and 0.71, 0.38 and 0.054 for MERF at 50, 100 and 400 base learner trees.
 GPBoost's own 90% interval inherits that, covering 73% of held-out rows on seen units. Across the
 20 settings in the tuning grid its coverage runs from 7% to 87%, and the 87% comes from underfitted
 settings that the validation split rejects. Algorithm 2 of Sigrist (2022), which estimates the covariance parameters
-from held-out residuals, brings coverage to 91% at the same accuracy.
+from held-out residuals, brings coverage to 90% at the same accuracy.
 
 ![reported variance and actual coverage](figures/panel_merf_gpboost_variance.png)
 
