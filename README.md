@@ -8,6 +8,7 @@ from public URLs and runnable end to end in Colab.
 | [catboost_rmsewithuncertainty_conformal](notebooks/catboost_rmsewithuncertainty_conformal.ipynb) | Turning the CatBoost `RMSEWithUncertainty` sigma into a calibrated 90% interval, and which held-out diagnostic predicts a lopsided one | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_rmsewithuncertainty_conformal.ipynb) |
 | [catboost_sglb_knowledge_uncertainty](notebooks/catboost_sglb_knowledge_uncertainty.ipynb) | Checking CatBoost's SGLB knowledge uncertainty against the actual error on a known function | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_sglb_knowledge_uncertainty.ipynb) |
 | [panel_merf_gpboost_variance](notebooks/panel_merf_gpboost_variance.ipynb) | Where MERF and GPBoost get their noise variance from, and what their 90% interval actually covers | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_merf_gpboost_variance.ipynb) |
+| [catboost_quantile_multiquantile_cqr](notebooks/catboost_quantile_multiquantile_cqr.ipynb) | What a CatBoost quantile band actually covers, when `MultiQuantile` is enough and when it needs conformalizing | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_quantile_multiquantile_cqr.ipynb) |
 
 ## catboost_rmsewithuncertainty_conformal
 
@@ -59,3 +60,23 @@ from held-out residuals, brings coverage to 90% at the same accuracy.
 ![reported variance and actual coverage](figures/panel_merf_gpboost_variance.png)
 
 About half an hour on a laptop CPU.
+
+## catboost_quantile_multiquantile_cqr
+
+The same 90% band built three ways — two separate `Quantile` models, `MultiQuantile` on the outer
+pair, and `MultiQuantile` on ten levels — across the three datasets from the conformalized quantile
+regression paper, at three hyperparameter settings and eight seeds.
+
+None of the 27 seed-averaged raw bands reached the level it claimed; they run from 55.6% to 89.8%,
+and how hard the trees are fitted moves coverage more than which of the three arms produced the
+band. Conformalizing centres every dataset on 90% and holds there across a training sweep where the
+raw band climbs from 61% at a 500-row pool to 86% at 36,584.
+
+Asking one model for ten levels ran about 3x faster than fitting ten and crossed far less often, on
+4% to 74% of rows against 24% to 97%. It is still not the best answer to crossing: sorting each row
+of predictions removes crossings outright and lands the individual levels closer in all nine
+settings.
+
+![raw and conformalized coverage against training size](figures/catboost_quantile_multiquantile_cqr.png)
+
+About fifteen minutes on a laptop CPU.
