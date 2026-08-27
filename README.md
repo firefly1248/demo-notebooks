@@ -9,6 +9,7 @@ from public URLs and runnable end to end in Colab.
 | [catboost_sglb_knowledge_uncertainty](notebooks/catboost_sglb_knowledge_uncertainty.ipynb) | Checking CatBoost's SGLB knowledge uncertainty against the actual error on a known function | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_sglb_knowledge_uncertainty.ipynb) |
 | [panel_merf_gpboost_variance](notebooks/panel_merf_gpboost_variance.ipynb) | Where MERF and GPBoost get their noise variance from, and what their 90% interval actually covers | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_merf_gpboost_variance.ipynb) |
 | [catboost_quantile_multiquantile_cqr](notebooks/catboost_quantile_multiquantile_cqr.ipynb) | What a CatBoost quantile band actually covers, when `MultiQuantile` is enough and when it needs conformalizing | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_quantile_multiquantile_cqr.ipynb) |
+| [uncertainty_attribution_shap](notebooks/uncertainty_attribution_shap.ipynb) | Whether attributing a prediction interval's width with SHAP recovers the features that actually drive the uncertainty | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/uncertainty_attribution_shap.ipynb) |
 | [panel_pymc_hierarchical](notebooks/panel_pymc_hierarchical.ipynb) | Where a hierarchical Bayesian model gets its noise scale from, and why 90% coverage does not settle it | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_pymc_hierarchical.ipynb) |
 
 ## catboost_rmsewithuncertainty_conformal
@@ -100,3 +101,25 @@ after `pm.set_data`, and which of the two standard hierarchical precautions matt
 ![coverage against accuracy, and the two estimated scales](figures/panel_pymc_hierarchical.png)
 
 About five minutes on a laptop CPU.
+
+## uncertainty_attribution_shap
+
+There is no library for asking which features make a row uncertain, so the common recipe is to take
+the interval width as a target, fit a second model to it and read that model's SHAP values. This
+notebook runs that recipe on data where the answer is known in advance: six features, one job each,
+with the noise scale driven by one of them and a slice of another's range cut out of the training
+data.
+
+The recipe does rank the two real sources above the three features that drive no uncertainty, 35%
+and 29% against about 8% each. It does not separate them. The interval width is dominated by the
+data variance, so attributing it attributes the noise, and reading the knowledge column instead
+gives the hole feature less credit than the width already gave it. Attributing the true noise
+function, where the correct answer is not in doubt, still sends a quarter of the credit to a noisy
+copy that enters the target nowhere.
+
+Distance to the nearest training row puts the hole feature first on all twelve seeds, at 48%
+against about 10% for everything else.
+
+![attribution of five uncertainty targets](figures/uncertainty_attribution_shap.png)
+
+Under a minute on a laptop CPU.
