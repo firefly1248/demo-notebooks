@@ -9,6 +9,7 @@ from public URLs and runnable end to end in Colab.
 | [catboost_sglb_knowledge_uncertainty](notebooks/catboost_sglb_knowledge_uncertainty.ipynb) | Checking CatBoost's SGLB knowledge uncertainty against the actual error on a known function | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_sglb_knowledge_uncertainty.ipynb) |
 | [panel_merf_gpboost_variance](notebooks/panel_merf_gpboost_variance.ipynb) | Where MERF and GPBoost get their noise variance from, and what their 90% interval actually covers | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_merf_gpboost_variance.ipynb) |
 | [catboost_quantile_multiquantile_cqr](notebooks/catboost_quantile_multiquantile_cqr.ipynb) | What a CatBoost quantile band actually covers, when `MultiQuantile` is enough and when it needs conformalizing | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_quantile_multiquantile_cqr.ipynb) |
+| [panel_pymc_hierarchical](notebooks/panel_pymc_hierarchical.ipynb) | Where a hierarchical Bayesian model gets its noise scale from, and why 90% coverage does not settle it | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_pymc_hierarchical.ipynb) |
 
 ## catboost_rmsewithuncertainty_conformal
 
@@ -80,3 +81,22 @@ settings.
 ![raw and conformalized coverage against training size](figures/catboost_quantile_multiquantile_cqr.png)
 
 About fifteen minutes on a laptop CPU.
+
+## panel_pymc_hierarchical
+
+The panel from `panel_merf_gpboost_variance`, with the same known scales, fitted as a hierarchical
+Bayesian model instead. The posterior predictive integrates over the parameters, so its interval
+carries the error of the fitted mean, which is the term the tree methods there had no room for.
+
+Both PyMC models cover 90.0% of held-out rows on seen units against GPBoost's 73%, and only one of
+them recovers the noise scale. A linear mean cannot fit a nonlinear truth, so its residual scale
+reads 1.39 against a true 1.0 and the interval widens to match. `pymc_bart.BART` in the mean slot
+reads 1.00 to 1.04 over five seeds and beats the tuned GPBoost on accuracy at the same time, at 15
+seconds a fit against 37 for GPBoost's whole 20-setting grid.
+
+It also measures what a zeroed intercept costs on an unseen unit, what a frozen BART node returns
+after `pm.set_data`, and which of the two standard hierarchical precautions matter on this panel.
+
+![coverage against accuracy, and the two estimated scales](figures/panel_pymc_hierarchical.png)
+
+About five minutes on a laptop CPU.
