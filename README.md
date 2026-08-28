@@ -11,6 +11,7 @@ from public URLs and runnable end to end in Colab.
 | [catboost_quantile_multiquantile_cqr](notebooks/catboost_quantile_multiquantile_cqr.ipynb) | What a CatBoost quantile band actually covers, when `MultiQuantile` is enough and when it needs conformalizing | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_quantile_multiquantile_cqr.ipynb) |
 | [uncertainty_attribution_shap](notebooks/uncertainty_attribution_shap.ipynb) | Whether attributing a prediction interval's width with SHAP recovers the features that actually drive the uncertainty | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/uncertainty_attribution_shap.ipynb) |
 | [panel_pymc_hierarchical](notebooks/panel_pymc_hierarchical.ipynb) | Where a hierarchical Bayesian model gets its noise scale from, and why 90% coverage does not settle it | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_pymc_hierarchical.ipynb) |
+| [panel_irregular_kernel](notebooks/panel_irregular_kernel.ipynb) | Replacing a random intercept with a continuous time kernel on an irregular panel, and why the interval needs a horizon term | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_irregular_kernel.ipynb) |
 
 ## catboost_rmsewithuncertainty_conformal
 
@@ -112,14 +113,26 @@ data.
 
 The recipe does rank the two real sources above the three features that drive no uncertainty, 35%
 and 29% against about 8% each. It does not separate them. The interval width is dominated by the
-data variance, so attributing it attributes the noise, and reading the knowledge column instead
-gives the hole feature less credit than the width already gave it. Attributing the true noise
-function, where the correct answer is not in doubt, still sends a quarter of the credit to a noisy
-copy that enters the target nowhere.
+data variance, which runs about 740x the knowledge variance here, so attributing the width
+attributes the noise; reading the knowledge column instead gives the hole feature less credit than
+the width already gave it. Attributing the true noise function, where the correct answer is not in
+doubt, still sends a quarter of the credit to a copy correlated 0.985 with the real driver.
 
 Distance to the nearest training row puts the hole feature first on all twelve seeds, at 48%
 against about 10% for everything else.
 
 ![attribution of five uncertainty targets](figures/uncertainty_attribution_shap.png)
 
-Under a minute on a laptop CPU.
+Two interventions follow. Putting rows back into the hole cuts the error there by a factor of eight,
+three quarters of it from the first 5% of rows, but the interval width falls and then drifts back up
+to slightly above the width outside — the excess from thin coverage goes away and a floor remains.
+
+Withholding columns turns the same design into the case where the driver of the spread was never
+recorded. Hide it and leave its correlated copy, and the copy takes 48% of the credit where
+renormalisation alone would give 20.5%, a confident answer naming a feature that causes nothing.
+Hide both and the width goes on varying and the surrogate goes on ranking, while the correlation
+between that width and the true noise level falls from 0.71 to zero.
+
+![what happens when the driver is withheld](figures/uncertainty_hidden_cause.png)
+
+About three minutes on a laptop CPU.
