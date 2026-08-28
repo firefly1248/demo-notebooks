@@ -11,6 +11,7 @@ from public URLs and runnable end to end in Colab.
 | [catboost_quantile_multiquantile_cqr](notebooks/catboost_quantile_multiquantile_cqr.ipynb) | What a CatBoost quantile band actually covers, when `MultiQuantile` is enough and when it needs conformalizing | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_quantile_multiquantile_cqr.ipynb) |
 | [uncertainty_attribution_shap](notebooks/uncertainty_attribution_shap.ipynb) | Whether attributing a prediction interval's width with SHAP recovers the features that actually drive the uncertainty | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/uncertainty_attribution_shap.ipynb) |
 | [panel_pymc_hierarchical](notebooks/panel_pymc_hierarchical.ipynb) | Where a hierarchical Bayesian model gets its noise scale from, and why 90% coverage does not settle it | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_pymc_hierarchical.ipynb) |
+| [score_sensitivity_venn_abers](notebooks/score_sensitivity_venn_abers.ipynb) | How large a week-over-week move in a propensity score has to be before it means anything, and whether a Venn-Abers interval tells you | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/score_sensitivity_venn_abers.ipynb) |
 | [panel_irregular_kernel](notebooks/panel_irregular_kernel.ipynb) | Replacing a random intercept with a continuous time kernel on an irregular panel, and why the interval needs a horizon term | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_irregular_kernel.ipynb) |
 
 ## catboost_rmsewithuncertainty_conformal
@@ -127,6 +128,8 @@ Two interventions follow. Putting rows back into the hole cuts the error there b
 three quarters of it from the first 5% of rows, but the interval width falls and then drifts back up
 to slightly above the width outside — the excess from thin coverage goes away and a floor remains.
 
+![putting the hole's rows back](figures/uncertainty_fill_sweep.png)
+
 Withholding columns turns the same design into the case where the driver of the spread was never
 recorded. Hide it and leave its correlated copy, and the copy takes 48% of the credit where
 renormalisation alone would give 20.5%, a confident answer naming a feature that causes nothing.
@@ -134,5 +137,39 @@ Hide both and the width goes on varying and the surrogate goes on ranking, while
 between that width and the true noise level falls from 0.71 to zero.
 
 ![what happens when the driver is withheld](figures/uncertainty_hidden_cause.png)
+
+About three minutes on a laptop CPU.
+
+## score_sensitivity_venn_abers
+
+The companion to `uncertainty_attribution_shap`, asking the same question from the other end: not
+what makes an interval wide, but how large a week-over-week move has to be before it is worth
+explaining. A week here is one refit on a training window that has rolled forward, with the seed
+held fixed, so every bit of movement comes from the data rather than from the fitting routine.
+
+Over twenty-four pairs of weeks the median customer's score moves 0.042 with nothing about them
+changed, and 43% move at least the five points the exercise set out to explain. The mean Venn-Abers
+width across the same customers is 0.008 — the 95th percentile of the noise is eighteen times it.
+That is not a defect in Venn-Abers: it describes the mapping from score to probability, not how far
+the score itself moves when the model is refit, and the fitted model is an input to it.
+
+![the week-over-week move with nothing changed](figures/score_noise_floor.png)
+
+Three levers, each scored on the floor and on what it buys at a fixed five percent false alarm rate.
+Carrying over 98% of last week's window still leaves a floor of 0.127. Sixty-four times the training
+data takes detection from 13% to 63%. Averaging ten customers reaches 59% for nothing, and fifty
+reach 99% — until the whole book drifting together, 0.007 here, puts a floor under that too.
+
+![what moves the floor](figures/score_noise_levers.png)
+
+Whether the floor can be spent unevenly is the last question, and it needs a per-row predictor of
+how much a customer moves. Conditioning on the score is what makes the test able to fail: `p(1 - p)`
+scores 0.28 overall and 0.01 inside bands of the score, against a permutation chance level of 0.08.
+The Venn-Abers width clears nothing either way. The distance to the nearest training row is the only
+production-available candidate above its own chance level once the score is held fixed, 0.12 against
+0.07, and over only the driving features 0.13 — real, and far too weak to carry a threshold: on
+held-out weeks no per-row rule beats one global threshold.
+
+![what predicts which customers move](figures/score_noise_predictors.png)
 
 About three minutes on a laptop CPU.
