@@ -12,7 +12,7 @@ from public URLs and runnable end to end in Colab.
 | [uncertainty_attribution_shap](notebooks/uncertainty_attribution_shap.ipynb) | Whether attributing a prediction interval's width with SHAP recovers the features that actually drive the uncertainty | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/uncertainty_attribution_shap.ipynb) |
 | [panel_pymc_hierarchical](notebooks/panel_pymc_hierarchical.ipynb) | Where a hierarchical Bayesian model gets its noise scale from, and why 90% coverage does not settle it | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_pymc_hierarchical.ipynb) |
 | [score_sensitivity_venn_abers](notebooks/score_sensitivity_venn_abers.ipynb) | How large a week-over-week move in a propensity score has to be before it means anything, and whether a Venn-Abers interval tells you | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/score_sensitivity_venn_abers.ipynb) |
-| [panel_irregular_kernel](notebooks/panel_irregular_kernel.ipynb) | Replacing a random intercept with a continuous time kernel on an irregular panel, and why the interval needs a horizon term | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_irregular_kernel.ipynb) |
+| [panel_irregular_kernel](notebooks/panel_irregular_kernel.ipynb) | Adding a continuous time kernel to a random intercept on an irregular panel, and why the interval needs a horizon term | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_irregular_kernel.ipynb) |
 
 ## catboost_rmsewithuncertainty_conformal
 
@@ -173,3 +173,30 @@ held-out weeks no per-row rule beats one global threshold.
 ![what predicts which customers move](figures/score_noise_predictors.png)
 
 About three minutes on a laptop CPU.
+
+## panel_irregular_kernel
+
+Parts 4 and 5 used a random intercept, which assumes a unit's rows are exchangeable: a row from
+last week and a row from last year carry the same information about tomorrow. Here rows arrive as
+a Poisson process per unit and the unit level process is Ornstein-Uhlenbeck in real time, so that
+assumption is wrong by construction and the notebook measures what it costs.
+
+Adding `gp_coords` with `cluster_ids` and `cov_function="exponential"` to the random effect recovers
+the unit variance at 3.99 against a true 4.0 and the range at 2.60 against 3.0, where the intercept
+finds 1.91 and books 3.73 as noise against a true 1.0. Read the kernel as an addition to the
+intercept rather than a replacement for it: on a panel whose unit effect is half permanent and half
+drifting, a kernel-only fit puts the range above the true 3.0 on all five seeds, 4.0 to 12.1, and
+carrying `group_data` alongside it shrinks that overshoot without removing it, because at this panel
+size the two components are weakly identified.
+
+The interval is the point. Measured against a closed-form oracle, the true covariance needs 21% more
+width at a gap of 4 than at a gap of 1; the kernel's width grows 15% and the intercept's 0.2%, so at
+a gap of 4 the intercept covers 85% where the kernel covers 90%, which its single aggregate 83%
+hides. A two-seed six-setting sweep separates what survives tuning from what does not, and a
+regular-grid control shows the defect belongs to the covariance assumption rather than to irregular
+arrival.
+
+![interval width against forecast horizon, and the variance decomposition](figures/panel_irregular_kernel.png)
+
+About fifty minutes on a laptop CPU, most of it inside GPBoost, and longer on Colab's two free
+cores.
