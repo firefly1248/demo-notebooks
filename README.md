@@ -12,7 +12,7 @@ from public URLs and runnable end to end in Colab.
 | [uncertainty_attribution_shap](notebooks/uncertainty_attribution_shap.ipynb) | Whether attributing a prediction interval's width with SHAP recovers the features that actually drive the uncertainty | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/uncertainty_attribution_shap.ipynb) |
 | [panel_pymc_hierarchical](notebooks/panel_pymc_hierarchical.ipynb) | Where a hierarchical Bayesian model gets its noise scale from, and why 90% coverage does not settle it | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_pymc_hierarchical.ipynb) |
 | [score_sensitivity_venn_abers](notebooks/score_sensitivity_venn_abers.ipynb) | How large a week-over-week move in a propensity score has to be before it means anything, and whether a Venn-Abers interval tells you | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/score_sensitivity_venn_abers.ipynb) |
-| [panel_irregular_kernel](notebooks/panel_irregular_kernel.ipynb) | Adding a continuous time kernel to a random intercept on an irregular panel, and why the interval needs a horizon term | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_irregular_kernel.ipynb) |
+| [panel_irregular_kernel](notebooks/panel_irregular_kernel.ipynb) | Which random effect an irregular panel needs, what each route to it costs, and why the interval needs a horizon term | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_irregular_kernel.ipynb) |
 
 ## catboost_rmsewithuncertainty_conformal
 
@@ -176,27 +176,39 @@ About three minutes on a laptop CPU.
 
 ## panel_irregular_kernel
 
-Parts 4 and 5 used a random intercept, which assumes a unit's rows are exchangeable: a row from
-last week and a row from last year carry the same information about tomorrow. Here rows arrive as
-a Poisson process per unit and the unit level process is Ornstein-Uhlenbeck in real time, so that
-assumption is wrong by construction and the notebook measures what it costs.
+Rows arrive as a Poisson process per unit, so the distance from a unit's last training row to a
+held-out row is a distribution rather than a fixed lead time, and the unit level process is
+Ornstein-Uhlenbeck in real time. Every quantity has a known truth, and a closed-form oracle gives the
+predictive distribution a correctly specified model would produce.
 
-Adding `gp_coords` with `cluster_ids` and `cov_function="exponential"` to the random effect recovers
-the unit variance at 3.99 against a true 4.0 and the range at 2.60 against 3.0, where the intercept
-finds 1.91 and books 3.73 as noise against a true 1.0. Read the kernel as an addition to the
-intercept rather than a replacement for it: on a panel whose unit effect is half permanent and half
-drifting, a kernel-only fit puts the range above the true 3.0 on all five seeds, 4.0 to 12.1, and
-carrying `group_data` alongside it shrinks that overshoot without removing it, because at this panel
-size the two components are weakly identified.
+The question is which random effect such a panel needs and what each route to it costs. A random
+intercept assumes a unit's rows are exchangeable, so it issues one interval width for every horizon:
+its mean width lands within 1.5% of what the true covariance requires while being 13% too wide at a
+gap of 1 and 7% too narrow at a gap of 4. Replacing it with an exponential kernel over observation
+time recovers the unit variance at 3.995 against a true 4.0 and the range at 2.60 against 3.0, and
+supplies 15 of the 21 points of width growth the truth requires.
 
-The interval is the point. Measured against a closed-form oracle, the true covariance needs 21% more
-width at a gap of 4 than at a gap of 1; the kernel's width grows 15% and the intercept's 0.2%, so at
-a gap of 4 the intercept covers 85% where the kernel covers 90%, which its single aggregate 83%
-hides. A two-seed six-setting sweep separates what survives tuning from what does not, and a
-regular-grid control shows the defect belongs to the covariance assumption rather than to irregular
-arrival.
+Three things the notebook measures that decide whether to bother. The two errors are asymmetric: the
+kernel nests the intercept, so fitting it on a panel whose unit effect never drifts costs nothing
+measurable, while fitting the intercept on a drifting panel costs 0.07 to 0.31 RMSE in every cell of
+a six-setting sweep, 5.5 points of coverage and the whole horizon term. Before paying for either,
+the semivariogram of within-unit residual pairs against elapsed separation climbs steeply when the
+effect drifts and stays flat when it is a permanent level, at the price of one pooled fit. And the
+horizon-aware interval does not need the library: a pooled booster, then an exponential covariance
+fitted to out-of-fold residuals and applied in closed form, costs an order of magnitude less time
+and supplies 12 of those 21 points against the joint fit's 15, at 0.12 RMSE. It reads its noise
+variance at 2.3 against a true 1.0, since it fits the covariance to residuals that carry more of the
+mean function's own error, which is what widens its interval and flattens its horizon response.
 
-![interval width against forecast horizon, and the variance decomposition](figures/panel_irregular_kernel.png)
+What the fits cannot tell you. A kernel-only range is not persistence once any part of the unit
+effect is permanent: on a half-permanent panel it reads 4.0 to 12.1 against a true 3.0 on all five
+seeds while accuracy and coverage look fine. A fitted noise variance is the model's residual scale
+rather than the data's noise. Estimating covariance parameters in-sample collapses the noise variance
+to 0.0007. Elapsed time handed to the trees as an ordinary feature, with the interval from quantile
+fits, reaches nominal coverage at none of four settings. And a two-seed six-setting sweep separates
+what survives tuning from what does not, while a regular-grid control shows the defect belongs to the
+covariance assumption rather than to irregular arrival.
 
-About fifty minutes on a laptop CPU, most of it inside GPBoost, and longer on Colab's two free
-cores.
+![interval width against forecast horizon, and what the wrong covariance costs each way](figures/panel_irregular_kernel.png)
+
+An hour or two on a laptop CPU, most of it inside GPBoost, and longer on Colab's two free cores.
