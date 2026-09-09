@@ -13,6 +13,7 @@ from public URLs and runnable end to end in Colab.
 | [panel_pymc_hierarchical](notebooks/panel_pymc_hierarchical.ipynb) | Where a hierarchical Bayesian model gets its noise scale from, and why 90% coverage does not settle it | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_pymc_hierarchical.ipynb) |
 | [score_sensitivity_venn_abers](notebooks/score_sensitivity_venn_abers.ipynb) | How large a week-over-week move in a propensity score has to be before it means anything, and whether a Venn-Abers interval tells you | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/score_sensitivity_venn_abers.ipynb) |
 | [panel_irregular_kernel](notebooks/panel_irregular_kernel.ipynb) | Which random effect an irregular panel needs, what each route to it costs, and why the interval needs a horizon term | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_irregular_kernel.ipynb) |
+| [panel_informative_arrival](notebooks/panel_informative_arrival.ipynb) | What an arrival process that depends on the outcome costs a predictive model, which deployment target it costs it on, and how to measure that with two averages | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_informative_arrival.ipynb) |
 
 ## catboost_rmsewithuncertainty_conformal
 
@@ -213,3 +214,40 @@ covariance assumption rather than to irregular arrival.
 
 About forty minutes on an Apple-silicon laptop, most of it inside GPBoost, and longer on
 Colab's two free cores.
+
+## panel_informative_arrival
+
+Drops part 6's assumption that arrival times are ignorable: the intensity now depends on the unit
+effect itself, so a unit contributes more rows in the periods when its outcome runs high. The tilt
+this puts on the training set has a closed form, `g * variance`, measured at 1.364 [1.299, 1.453]
+against 1.40 predicted.
+
+The point of the notebook is that the damage is a property of the deployment target rather than of
+the model. One pooled booster, scored twice: mean residual +0.089 on the rows the arrival process
+hands you after the cut, and -1.296 on every unit on a grid over the same period. A held-out set is
+drawn from the first population, so it reports the smaller of the two. The sharpest form of that is
+what it does to the reference model: on arriving rows the oracle, fitted to the complete latent
+panel, has the worst RMSE of the six rungs in both settings where arrival is informative, while on
+the grid it has the smallest absolute bias of the six.
+
+The diagnostic costs two averages. Subtracting the unit-weighted from the row-weighted mean
+out-of-fold residual reads 0.008 when arrival is ignorable and -0.011 when it depends on the outcome
+only through a feature the model already uses, against 0.644 when it depends on the unit effect. It
+measures who shows up and not when, and the share of the tilt it sees has a closed form, the
+variance share of a unit's average over the window: 0.377 predicted against 0.375 measured at a
+range of 2, and 0.947 against 0.887 at 48, for a window of 8.
+
+Five rungs and an oracle, on three settings. Two history columns remove 0.842 [0.705, 1.095] of the
+grid bias on every seed. A random intercept on top of them adds nothing measurable while the unit
+effect drifts and removes another 0.191 [0.134, 0.241] once it nearly stands still. Inverse-intensity
+weights, given the true intensity, cost an effective sample size of 0.628 against the closed-form
+`exp(-g^2 variance)` of 0.613, and their correction disappears as capacity grows, from -0.216 at two
+leaves to -1.191 at 31 leaves and 1000 rounds, where the unweighted model already sat. That collapse
+does not need the features to carry the unit: with independent draws per row the leakage of the unit
+effect into the features is zero and the correction still goes, while features that never move
+within a unit maximise the leakage and collapse no less: the correction left at 31 leaves and 1000
+rounds is about 0.1 in all three regimes.
+
+![the same model scored on two targets, and what the diagnostic can see](figures/panel_informative_arrival.png)
+
+About twenty minutes on an Apple-silicon laptop, longer on Colab's two free cores.
