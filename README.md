@@ -211,4 +211,5 @@ covariance assumption rather than to irregular arrival.
 
 ![interval width against forecast horizon, and what the wrong covariance costs each way](figures/panel_irregular_kernel.png)
 
-An hour or two on a laptop CPU, most of it inside GPBoost, and longer on Colab's two free cores.
+About forty minutes on an Apple-silicon laptop, most of it inside GPBoost, and longer on
+Colab's two free cores.
