@@ -72,15 +72,19 @@ The same 90% band built three ways — two separate `Quantile` models, `MultiQua
 pair, and `MultiQuantile` on ten levels — across the three datasets from the conformalized quantile
 regression paper, at three hyperparameter settings and eight seeds.
 
-None of the 27 seed-averaged raw bands reached the level it claimed; they run from 55.6% to 89.8%,
-and how hard the trees are fitted moves coverage more than which of the three arms produced the
-band. Conformalizing centres every dataset on 90% and holds there across a training sweep where the
-raw band climbs from 61% at a 500-row pool to 86% at 36,584.
+None of the 27 seed-averaged raw bands reached the level it claimed; they run from 55.6% to 89.8%.
+How hard the trees are fitted lowers coverage on every arm, and the ten-level arm falls furthest:
+on concrete at the hardest setting the gap between arms is wider than the gap between settings.
+Conformalizing centres every dataset on 90% and holds there across a training sweep where the raw
+band climbs from 61% at a 500-row pool to 86% at 36,584.
 
 Asking one model for ten levels ran about 3x faster than fitting ten and crossed far less often, on
 4% to 74% of rows against 24% to 97%. It is still not the best answer to crossing: sorting each row
-of predictions removes crossings outright and lands the individual levels closer in all nine
-settings.
+of predictions removes crossings outright and lands the individual levels closer than the joint
+model as fitted in all nine settings, and closer than the joint model sorted too in eight. A
+synthetic case separates where the shared structure shows from where it costs: at the light setting
+the arms are within 0.001 of each other on pinball loss, and only once the fit is hard does sharing
+cost, about 2% for the pair and 7% for ten levels.
 
 ![raw and conformalized coverage against training size](figures/catboost_quantile_multiquantile_cqr.png)
 
