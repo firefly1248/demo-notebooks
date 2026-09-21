@@ -358,7 +358,10 @@ throughout, changing only the rows the 90% interval is calibrated on. Calibrated
 width covers 0.906 in total and runs from 0.955 on rows just after the cut to 0.873 on the farthest.
 Calibrated on random training rows it covers 0.772, because those rows sit a median 0.41 from a
 training row of their own unit against 2.45 for the rows scored. A width per gap bin holds 0.902 to
-0.914 in every bin, and a width scaled by the kernel's sd is flat about a point under nominal.
+0.914 in every bin, averaged over five seeds; on a single panel it flattens the slope rather than
+removing it. A width scaled by the kernel's sd is flat about a point under nominal, because the
+quantile is taken on the calibration model and spent on the deployed one, whose reported sd shrinks
+by more than its errors do.
 
 Rows of one unit are not independent calibration draws: 159 rows from 10 units spread like about 61
 independent rows.
