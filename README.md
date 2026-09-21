@@ -14,6 +14,8 @@ from public URLs and runnable end to end in Colab.
 | [score_sensitivity_venn_abers](notebooks/score_sensitivity_venn_abers.ipynb) | How large a week-over-week move in a propensity score has to be before it means anything, and whether a Venn-Abers interval tells you | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/score_sensitivity_venn_abers.ipynb) |
 | [panel_irregular_kernel](notebooks/panel_irregular_kernel.ipynb) | Which random effect an irregular panel needs, what each route to it costs, and why the interval needs a horizon term | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_irregular_kernel.ipynb) |
 | [panel_informative_arrival](notebooks/panel_informative_arrival.ipynb) | What an arrival process that depends on the outcome costs a predictive model, which deployment target it costs it on, and how to measure that with two averages | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_informative_arrival.ipynb) |
+| [panel_sequence_models](notebooks/panel_sequence_models.ipynb) | That the decay sequence models use for irregular observation times is part 6's kernel, and that a Gaussian head on it widens with the gap but loses its nominal coverage as the gap grows | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_sequence_models.ipynb) |
+| [panel_coverage_by_gap](notebooks/panel_coverage_by_gap.ipynb) | Why one coverage number hides where a panel interval fails, and which calibration rows make split conformal hold | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_coverage_by_gap.ipynb) |
 
 ## catboost_rmsewithuncertainty_conformal
 
@@ -255,3 +257,112 @@ rounds is about 0.1 in all three regimes.
 ![the same model scored on two targets, and what the diagnostic can see](figures/panel_informative_arrival.png)
 
 About twenty minutes on an Apple-silicon laptop, longer on Colab's two free cores.
+
+## panel_sequence_models
+
+GRU-D's input decay is `gamma * x_last + (1 - gamma) * xbar` with `gamma = exp(-max(0, W d + b))`.
+That is the Ornstein-Uhlenbeck conditional mean part 6 arrived at, with the range fitted by gradient
+descent instead of by likelihood, and the notebook computes both expressions rather than restating
+one: they agree to 2.2e-16 over eight gaps. Mozer et al. (2017), cited by Rubanova et al. (2019,
+section 3.1), make a related point from the other side, that a hidden state decaying to zero solves
+a linear ODE.
+
+What a Gaussian head on that mechanism does is measured rather than assumed, with GRU-D implemented
+as published apart from equation 4's observed branch, which here would hand a row its own outcome:
+`delta` is an input channel, the input decay acts on the last observed residual per equations 4 and
+5, a full matrix decays the hidden state over `[step, delta]` per equation 6, and the mask goes into
+the cell. The interval is not flat. Its width opens 10% from the shortest gap bin to the longest
+with no path memory in the truth and 30% with it, against 29% and 22% for part 6's closed form and
+35% for the true covariance. The six gap bins are equal-count, about 3,100 target rows each.
+
+What fails is the level, and it fails in the gap. Coverage of a nominal 90% band runs 0.874 to 0.800
+across the bins with no path memory and 0.850 to 0.800 with it, lower at the far end on all ten
+panels though strictly monotone on only one, while the closed form holds 0.900 to 0.897 and the true
+covariance 0.894 to 0.895. The multiplier the head's sd needs for 90% coverage rises with the gap:
+on the target rows 1.06, 1.14, 1.22, 1.21, 1.25, 1.31 across the six bins, with bands that resample
+whole units, while the closed form's stays within a few per cent of one in every bin. Rescaling by
+the best single factor the target rows admit hits 90% on average and still runs 0.936 to 0.872 by
+bin, so the failure is a slope and one number cannot straighten it.
+
+The aggregate contrast between what the head needs on the training rows of held-out units (1.026)
+and on the target rows (1.201) is largely a difference in gap mix rather than a difference between
+seen and unseen rows, and the notebook decomposes it: putting the target rows' per-bin multipliers
+on the training rows' gap distribution accounts for 74% of the contrast with no path memory and 36%
+with it, leaving +0.046 and +0.123. So the head is miscalibrated both because a row is far and
+because it is unseen, in a share that depends on the truth.
+
+Three alternative explanations are ruled out rather than argued away. Undertraining: on a 3000-step
+budget the validation loss bottoms at step 75 and is 1.1 worse at the ceiling, and the scored fits
+stopped between 25 and 100 of their 400 steps. Capacity: refitting the same arm with a hidden state
+five times wider leaves the slope where it was, 0.880 to 0.797 with no path memory and 0.837 to
+0.758 with it, and costs accuracy rather than buying it, closing 45% and 15% against the narrow
+arm's 54% and 23%. And crediting the wrong mechanism: the fitted `W` lands in the flat part of
+`max(0, .)` in 8 of the 20 fits, leaving the gate at exactly 1, so there the published input decay
+contributed nothing and the hidden-state decay carried the gap alone, which is why every fit's
+initialisation varies with its panel's seed rather than starting from the same weights.
+
+The closed form's variance is not fitted at any gap, and it survives the wrong covariance family.
+With the unit effect drawn from a Matern 3/2 the exponential fit reports a range of 6.98
+[6.41, 7.27] where that truth's own correlation falls to 1/e by 5.05, and its coverage still runs
+0.905 to 0.878; from a sum of two exponentials with ranges 1 and 16 it reports 2.99 and runs 0.898
+to 0.916. The exponential control on its own draw reports 4.04 against a 1/e distance of 4.10 and
+runs 0.903 to 0.897. The interval also stops growing: it settles at the marginal sd and is 99% of
+the way there by about 2.2 ranges past the unit's last row.
+
+What one number in place of that curve costs is priced over the gaps the panel actually produces
+rather than a hand-picked grid, using the oracle's own conditional sd: it runs 0.604 to 1.106 over
+18,971 target rows, a factor of 1.83, and a constant half-width of 1.60 that averages 90% delivers
+0.956, 0.921, 0.899, 0.884, 0.873, 0.865 by bin.
+
+On the mean the arms trade places. Where the truth is a Gauss-Markov unit effect, part 6's two
+closed-form stages close 75% of the distance to the oracle and GRU-D 54%, while three guessed
+exponential averages of the covariate path are worse than not having them at -10%. Where the truth
+also carries a nonlinear functional of that path, which no covariance over observation times can
+express, GRU-D closes 23% against the closed form's 13%, the guessed columns 36%, and the columns
+with the closed form on their residuals 50%, which is the best arm here on both the mean and the
+interval. In RMSE that is 1.056 for GRU-D against 1.021 with no path memory, 1.531 against 1.602
+with it, and 1.337 for the two together. Fitting the columns and the kernel jointly in GPBoost
+instead gives the same mean, 1.340, and a broken interval: its noise variance goes to zero and it
+covers 0.782, against 0.901 for the two stages on out-of-fold residuals.
+
+Guessing that path memory is forgiving in both of its parameters. A single exponential average
+closes 0.261 at a rate of 0.422 and 0.365 at 2.371 against a true rate of 1, which itself closes
+0.369, and two columns at 0.4 and 2.5 close 0.370. Replacing the nonlinearity the truth averages
+with a quadratic basis closes 0.363 against that 0.370, though that basis contains `x2**2`, one of
+the two terms of the truth's `beta`, so it measures the price of a spanning set rather than of a
+basis blind to the truth. The scan is asymmetric: a rate 30x too slow closes -0.036 and a rate 30x
+too fast still closes 0.213, so guess high. And the same straddling pair on panels with no path
+memory at all closes -7%.
+
+The two-stage covariance fit holds down to thirty units, recovering a mean unit-effect variance of
+1.05 and a mean range of 3.09 against a truth of 1.0 and 4.0, though one seed puts the range at
+1.59, so the small-panel failure is a biased range rather than a divergence. Given path memory it
+attributes it to the unit effect instead: the fitted variance comes back 2.27x its
+path-memory-off value and the fitted range 0.42x, which against the truth is 2.30x and 0.40x.
+Coverage stays at 90%, so no calibration table gives that away.
+
+The sequence arm runs in a separate process. `lightgbm` and `torch` each ship their own OpenMP
+runtime and on macOS whichever initialises first owns it, so importing `torch` before the first
+`lightgbm` call kills the interpreter with no traceback.
+
+![what the decay reaches, and what it does not](figures/panel_sequence_models.png)
+
+About eight minutes on an Apple-silicon laptop, longer on Colab's shared cores plus the torch
+install: the thirty GRU-D fits run one after another in a single-threaded subprocess, so more cores
+do not help.
+
+## panel_coverage_by_gap
+
+Split conformal on the panel from `panel_sequence_models` with its path memory off, one model
+throughout, changing only the rows the 90% interval is calibrated on. Calibrated on a backtest, one
+width covers 0.906 in total and runs from 0.955 on rows just after the cut to 0.873 on the farthest.
+Calibrated on random training rows it covers 0.772, because those rows sit a median 0.41 from a
+training row of their own unit against 2.45 for the rows scored. A width per gap bin holds 0.902 to
+0.914 in every bin, and a width scaled by the kernel's sd is flat about a point under nominal.
+
+Rows of one unit are not independent calibration draws: 159 rows from 10 units spread like about 61
+independent rows.
+
+![coverage by gap, and what a calibration unit is worth](figures/panel_coverage_by_gap.png)
+
+Under a minute on a laptop CPU.
