@@ -16,6 +16,7 @@ from public URLs and runnable end to end in Colab.
 | [panel_informative_arrival](notebooks/panel_informative_arrival.ipynb) | What an arrival process that depends on the outcome costs a predictive model, which deployment target it costs it on, and how to measure that with two averages | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_informative_arrival.ipynb) |
 | [panel_sequence_models](notebooks/panel_sequence_models.ipynb) | That the decay sequence models use for irregular observation times is part 6's kernel, and that a Gaussian head on it widens with the gap but loses its nominal coverage as the gap grows | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_sequence_models.ipynb) |
 | [panel_coverage_by_gap](notebooks/panel_coverage_by_gap.ipynb) | Why one coverage number hides where a panel interval fails, and which calibration rows make split conformal hold | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_coverage_by_gap.ipynb) |
+| [catboost_boost_from_average](notebooks/catboost_boost_from_average.ipynb) | What CatBoost's `boost_from_average` fixes in a model tuned on a ranking metric, and what it leaves | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_boost_from_average.ipynb) |
 
 ## catboost_rmsewithuncertainty_conformal
 
@@ -369,3 +370,23 @@ independent rows.
 ![coverage by gap, and what a calibration unit is worth](figures/panel_coverage_by_gap.png)
 
 Under a minute on a laptop CPU.
+
+## catboost_boost_from_average
+
+CatBoost starts `Logloss` and `MultiClass` from uniform probabilities, where XGBoost 3.2 and
+LightGBM 4.6 start from the class prior. `boost_from_average=True` fixes that on binary data only;
+on multiclass data a baseline passed through `Pool` does it, and prediction has to pass it again.
+
+The notebook refits the ten worst-calibrated CatBoost datasets of a small-data benchmark tuned on
+PR AUC with the hyperparameters that tuning chose, once from each start. The prior start takes the
+confidence gap on thyroid from -0.274 to -0.030 and on appendicitis from -0.233 to +0.005, and
+leaves `led7digit`, whose prior is nearly uniform, as underconfident as it was. Over 108 datasets
+it improves Brier on 51 of the 78 imbalanced ones (p = 0.0005), changes nothing on average on the
+30 nearly balanced ones (p = 0.72) and does not move PR AUC (p = 0.53). Where all three boosters
+got a small training budget, it brings CatBoost's gap from -0.096 to -0.025, level with XGBoost
+(-0.038) and LightGBM (-0.034). What it cannot fix is the small budget itself, which a ranking
+metric does not penalise.
+
+![Brier, confidence gap and ECE from each start](figures/catboost_boost_from_average.png)
+
+Under a minute of compute on a laptop CPU; a free Colab CPU is several times slower.
