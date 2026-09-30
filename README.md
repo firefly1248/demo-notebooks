@@ -374,7 +374,9 @@ Under a minute on a laptop CPU.
 ## catboost_boost_from_average
 
 CatBoost starts `Logloss` and `MultiClass` from uniform probabilities, where XGBoost 3.2 and
-LightGBM 4.6 start from the class prior. `boost_from_average=True` fixes that on binary data only;
+LightGBM 4.6 start from the class prior (LightGBM's docs list its `boost_from_average` for binary and
+`multiclassova` only, but 4.6 applies it to softmax multiclass too). `boost_from_average=True` fixes
+that on binary data only;
 on multiclass data a baseline passed through `Pool` does it, and prediction has to pass it again.
 
 The notebook refits the ten worst-calibrated CatBoost datasets of a small-data benchmark tuned on
@@ -387,6 +389,8 @@ got a small training budget, it brings CatBoost's gap from -0.096 to -0.025, lev
 (-0.038) and LightGBM (-0.034). What it cannot fix is the small budget itself, which a ranking
 metric does not penalise.
 
-![Brier, confidence gap and ECE from each start](figures/catboost_boost_from_average.png)
+![Brier score from each start](figures/catboost_boost_from_average_brier.png)
+![Confidence gap from each start](figures/catboost_boost_from_average_gap.png)
+![ECE from each start](figures/catboost_boost_from_average_ece.png)
 
 Under a minute of compute on a laptop CPU; a free Colab CPU is several times slower.
