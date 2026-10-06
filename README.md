@@ -17,6 +17,7 @@ from public URLs and runnable end to end in Colab.
 | [panel_sequence_models](notebooks/panel_sequence_models.ipynb) | That the decay sequence models use for irregular observation times is part 6's kernel, and that a Gaussian head on it widens with the gap but loses its nominal coverage as the gap grows | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_sequence_models.ipynb) |
 | [panel_coverage_by_gap](notebooks/panel_coverage_by_gap.ipynb) | Why one coverage number hides where a panel interval fails, and which calibration rows make split conformal hold | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_coverage_by_gap.ipynb) |
 | [catboost_boost_from_average](notebooks/catboost_boost_from_average.ipynb) | What CatBoost's `boost_from_average` fixes in a model tuned on a ranking metric, and what it leaves | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_boost_from_average.ipynb) |
+| [model_comparison_paired_cv](notebooks/model_comparison_paired_cv.ipynb) | Why a t-test over cross-validation folds reports a difference that is not there, what pairing is actually worth, and which standard error survives a redraw | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison_paired_cv.ipynb) |
 
 ## catboost_rmsewithuncertainty_conformal
 
@@ -394,3 +395,30 @@ metric does not penalise.
 ![ECE from each start](figures/catboost_boost_from_average_ece.png)
 
 Under a minute of compute on a laptop CPU; a free Colab CPU is several times slower.
+
+## model_comparison_paired_cv
+
+RandomForest against ExtraTrees on `breast_cancer`, Brier score per fold, 10 x 10 repeated stratified
+CV, with a seed of its own for every forest fit. The two models' fold scores correlate 0.96, so
+pairing the folds cuts the standard error 4.35x; against a linear model, where the correlation is
+0.70, it cuts it 1.80x.
+
+Dividing the spread of the fold differences by the square root of the fold count treats 100
+overlapping training sets as 100 independent measurements. The Nadeau and Bengio (2003) factor
+`1/J + n_test/n_train` inflates that standard error 3.48x at this design, which moves the forests'
+difference from p = 1.6e-8 to p = 0.08 and leaves the linear model's at p = 0.0037. Repeats do not
+help: each repeat is a complete pass over the same rows, and the spread between the 10 repeat means
+is 0.00088 where independent folds would give 0.00143. Sharing a `random_state` between two models is
+not pairing either, with correlations of -0.01 and -0.11 on a shared seed against -0.12 and +0.05 on
+independent ones, on a standard error of about 0.10.
+
+Which standard error is right is settled by redrawing: one population cut into 40 samples of 600
+rows, the whole comparison rerun on each. The difference moves between samples with an sd of 0.00208,
+which is 1.81x the naive standard error and 0.67x the corrected one. The naive 95% interval holds the
+average of those samples 80% of the time, the corrected one 100%, so the correction bounds the
+uncertainty rather than pricing it.
+
+![the same folds under four standard errors](figures/model_comparison_paired_cv.png)
+
+About five minutes on a laptop CPU, longer on Colab's shared cores: nearly all of it is the 2900
+model fits, which run at `n_jobs=2`.
