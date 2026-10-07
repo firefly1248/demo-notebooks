@@ -18,6 +18,7 @@ from public URLs and runnable end to end in Colab.
 | [panel_coverage_by_gap](notebooks/panel_coverage_by_gap.ipynb) | Why one coverage number hides where a panel interval fails, and which calibration rows make split conformal hold | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_coverage_by_gap.ipynb) |
 | [catboost_boost_from_average](notebooks/catboost_boost_from_average.ipynb) | What CatBoost's `boost_from_average` fixes in a model tuned on a ranking metric, and what it leaves | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_boost_from_average.ipynb) |
 | [model_comparison_paired_cv](notebooks/model_comparison_paired_cv.ipynb) | Why a t-test over cross-validation folds reports a difference that is not there, what pairing is actually worth, and which standard error survives a redraw | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison_paired_cv.ipynb) |
+| [model_comparison_decision](notebooks/model_comparison_decision.ipynb) | Turning a paired comparison over many datasets into a decision: the margin set first, equivalence as a verdict, and the three things that move it without touching the data | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison_decision.ipynb) |
 
 ## catboost_rmsewithuncertainty_conformal
 
@@ -422,3 +423,29 @@ uncertainty rather than pricing it.
 
 About five minutes on a laptop CPU, longer on Colab's shared cores: nearly all of it is the 2900
 model fits, which run at `n_jobs=2`.
+
+## model_comparison_decision
+
+CatBoost tuned from a uniform start against the same model re-tuned from the class prior, one paired
+difference per dataset over 108 datasets of a small-data benchmark, read as a decision rather than as
+a p-value. The quantity settles the answer first: on the 30 balanced datasets the signed confidence
+gap gives p = 0.015 and the absolute gap, computed from the same two columns, gives p = 0.14.
+
+With the margin fixed before the run (0.005 for PR AUC, 0.01 for the absolute gap) the same
+comparison splits three ways. PR AUC over every dataset is equivalent, its interval -0.0024 to 0.0017
+sitting at half the band, where its Wilcoxon p of 0.31 on its own says nothing. PR AUC on 15 datasets
+is unclear, with an interval twice the band. The absolute gap over every dataset is better, -0.0283
+to -0.0111, and on the balanced subset alone it is unclear.
+
+Three things then move a verdict without touching the data. Of 2000 random subsets of 15 datasets,
+78% are unclear; at 60 the equivalent verdict is reached by 96% of subsets of these datasets but only
+81% of resamples standing in for a fresh comparison of that size. Moving the margin to 0.0125 turns
+the calibration verdict from better to unclear, and shrinking the PR AUC margin to 0.002 does the
+same to equivalence. Merging sibling datasets into 95 families, which is a lower bound on the
+clustering because it only catches variants that differ by a trailing token, moves the calibration
+interval to -0.0258 to -0.0086 and flips it to unclear, by moving the mean rather than by widening
+the interval.
+
+![the same pair under four readings](figures/model_comparison_decision.png)
+
+Seconds on any CPU: it reads one published table and does arithmetic.
