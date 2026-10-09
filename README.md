@@ -3,57 +3,18 @@
 Self-contained notebooks backing posts and articles. One notebook per topic, each pulling its data
 from public URLs and runnable end to end in Colab.
 
+## Panel data
+
 | Notebook | Topic | Colab |
 |---|---|---|
-| [catboost_rmsewithuncertainty_conformal](notebooks/catboost_rmsewithuncertainty_conformal.ipynb) | Turning the CatBoost `RMSEWithUncertainty` sigma into a calibrated 90% interval, and which held-out diagnostic predicts a lopsided one | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_rmsewithuncertainty_conformal.ipynb) |
-| [catboost_sglb_knowledge_uncertainty](notebooks/catboost_sglb_knowledge_uncertainty.ipynb) | Checking CatBoost's SGLB knowledge uncertainty against the actual error on a known function | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_sglb_knowledge_uncertainty.ipynb) |
-| [panel_merf_gpboost_variance](notebooks/panel_merf_gpboost_variance.ipynb) | Where MERF and GPBoost get their noise variance from, and what their 90% interval actually covers | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_merf_gpboost_variance.ipynb) |
-| [catboost_quantile_multiquantile_cqr](notebooks/catboost_quantile_multiquantile_cqr.ipynb) | What a CatBoost quantile band actually covers, when `MultiQuantile` is enough and when it needs conformalizing | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_quantile_multiquantile_cqr.ipynb) |
-| [uncertainty_attribution_shap](notebooks/uncertainty_attribution_shap.ipynb) | Whether attributing a prediction interval's width with SHAP recovers the features that actually drive the uncertainty | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/uncertainty_attribution_shap.ipynb) |
-| [panel_pymc_hierarchical](notebooks/panel_pymc_hierarchical.ipynb) | Where a hierarchical Bayesian model gets its noise scale from, and why 90% coverage does not settle it | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_pymc_hierarchical.ipynb) |
-| [score_sensitivity_venn_abers](notebooks/score_sensitivity_venn_abers.ipynb) | How large a week-over-week move in a propensity score has to be before it means anything, and whether a Venn-Abers interval tells you | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/score_sensitivity_venn_abers.ipynb) |
-| [panel_irregular_kernel](notebooks/panel_irregular_kernel.ipynb) | Which random effect an irregular panel needs, what each route to it costs, and why the interval needs a horizon term | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_irregular_kernel.ipynb) |
-| [panel_informative_arrival](notebooks/panel_informative_arrival.ipynb) | What an arrival process that depends on the outcome costs a predictive model, which deployment target it costs it on, and how to measure that with two averages | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_informative_arrival.ipynb) |
-| [panel_sequence_models](notebooks/panel_sequence_models.ipynb) | That the decay sequence models use for irregular observation times is part 6's kernel, and that a Gaussian head on it widens with the gap but loses its nominal coverage as the gap grows | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_sequence_models.ipynb) |
-| [panel_coverage_by_gap](notebooks/panel_coverage_by_gap.ipynb) | Why one coverage number hides where a panel interval fails, and which calibration rows make split conformal hold | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel_coverage_by_gap.ipynb) |
-| [catboost_boost_from_average](notebooks/catboost_boost_from_average.ipynb) | What CatBoost's `boost_from_average` fixes in a model tuned on a ranking metric, and what it leaves | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost_boost_from_average.ipynb) |
-| [model_comparison_paired_cv](notebooks/model_comparison_paired_cv.ipynb) | Why a t-test over cross-validation folds reports a difference that is not there, what pairing is actually worth, and which standard error survives a redraw | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison_paired_cv.ipynb) |
-| [model_comparison_decision](notebooks/model_comparison_decision.ipynb) | Turning a paired comparison over many datasets into a decision: the margin set first, equivalence as a verdict, and the three things that move it without touching the data | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison_decision.ipynb) |
+| [panel_merf_gpboost_variance](notebooks/panel/panel_merf_gpboost_variance.ipynb) | Where MERF and GPBoost get their noise variance from, and what their 90% interval actually covers | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel/panel_merf_gpboost_variance.ipynb) |
+| [panel_pymc_hierarchical](notebooks/panel/panel_pymc_hierarchical.ipynb) | Where a hierarchical Bayesian model gets its noise scale from, and why 90% coverage does not settle it | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel/panel_pymc_hierarchical.ipynb) |
+| [panel_irregular_kernel](notebooks/panel/panel_irregular_kernel.ipynb) | Which random effect an irregular panel needs, what each route to it costs, and why the interval needs a horizon term | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel/panel_irregular_kernel.ipynb) |
+| [panel_informative_arrival](notebooks/panel/panel_informative_arrival.ipynb) | What an arrival process that depends on the outcome costs a predictive model, which deployment target it costs it on, and how to measure that with two averages | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel/panel_informative_arrival.ipynb) |
+| [panel_sequence_models](notebooks/panel/panel_sequence_models.ipynb) | That the decay sequence models use for irregular observation times is part 6's kernel, and that a Gaussian head on it widens with the gap but loses its nominal coverage as the gap grows | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel/panel_sequence_models.ipynb) |
+| [panel_coverage_by_gap](notebooks/panel/panel_coverage_by_gap.ipynb) | Why one coverage number hides where a panel interval fails, and which calibration rows make split conformal hold | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/panel/panel_coverage_by_gap.ipynb) |
 
-## catboost_rmsewithuncertainty_conformal
-
-Builds a 90% interval from the `RMSEWithUncertainty` head three ways (raw, sigma-normalized
-conformal, CQR at nominal 5/95 and 10/90) on one synthetic and two public datasets, measuring
-coverage, width and where the misses land.
-
-It also tests which held-out diagnostic predicts a lopsided interval. Skewness of the normalized
-residuals does not: on diamonds it ranges 0.38 to 5.58 across four hyperparameter settings while
-the miss imbalance stays between 0.4 and 0.8 points. Bowley skew and the ratio of the 5th and 95th
-percentiles do.
-
-![coverage split](figures/catboost_rmsewithuncertainty_conformal.png)
-
-About five minutes on a free Colab CPU.
-
-## catboost_sglb_knowledge_uncertainty
-
-`posterior_sampling=True` plus `virtual_ensembles_predict` reports knowledge uncertainty from a
-single model. This notebook measures that signal against the truth: the data comes from a known and
-bounded 2D function, so every test point has both a reported uncertainty and a real error, and no
-region is intrinsically harder to predict than another.
-
-Both uncertainty columns are variances, so the notebook square-roots them before comparing them
-with an error in the units of the target. In a gap cut out of the training data the model is 8.2x
-more wrong than on covered data while the reported uncertainty is 1.1x. Past the edge of the range
-the error is 20x, the signal is one constant across all 800 test points, and the total uncertainty
-comes to 0.66x, below the covered level on all ten runs. A nearest-neighbour distance to the
-training set ranks the error at 0.78 against 0.00 for knowledge uncertainty.
-
-![knowledge uncertainty against error](figures/catboost_sglb_knowledge_uncertainty.png)
-
-About a minute on a free Colab CPU.
-
-## panel_merf_gpboost_variance
+### panel_merf_gpboost_variance
 
 MERF and GPBoost both fit a nonlinear fixed part with trees and a random intercept per unit, and
 both return a variance decomposition. Both also estimate the noise variance from residuals on rows
@@ -67,35 +28,11 @@ GPBoost's own 90% interval inherits that, covering 73% of held-out rows on seen 
 settings that the validation split rejects. Algorithm 2 of Sigrist (2022), which estimates the covariance parameters
 from held-out residuals, brings coverage to 90% at the same accuracy.
 
-![reported variance and actual coverage](figures/panel_merf_gpboost_variance.png)
+![reported variance and actual coverage](figures/panel/panel_merf_gpboost_variance.png)
 
 About half an hour on a laptop CPU.
 
-## catboost_quantile_multiquantile_cqr
-
-The same 90% band built three ways — two separate `Quantile` models, `MultiQuantile` on the outer
-pair, and `MultiQuantile` on ten levels — across the three datasets from the conformalized quantile
-regression paper, at three hyperparameter settings and eight seeds.
-
-None of the 27 seed-averaged raw bands reached the level it claimed; they run from 55.6% to 89.8%.
-How hard the trees are fitted lowers coverage on every arm, and the ten-level arm falls furthest:
-on concrete at the hardest setting the gap between arms is wider than the gap between settings.
-Conformalizing centres every dataset on 90% and holds there across a training sweep where the raw
-band climbs from 61% at a 500-row pool to 86% at 36,584.
-
-Asking one model for ten levels ran about 3x faster than fitting ten and crossed far less often, on
-4% to 74% of rows against 24% to 97%. It is still not the best answer to crossing: sorting each row
-of predictions removes crossings outright and lands the individual levels closer than the joint
-model as fitted in all nine settings, and closer than the joint model sorted too in eight. A
-synthetic case separates where the shared structure shows from where it costs: at the light setting
-the arms are within 0.001 of each other on pinball loss, and only once the fit is hard does sharing
-cost, about 2% for the pair and 7% for ten levels.
-
-![raw and conformalized coverage against training size](figures/catboost_quantile_multiquantile_cqr.png)
-
-About fifteen minutes on a laptop CPU.
-
-## panel_pymc_hierarchical
+### panel_pymc_hierarchical
 
 The panel from `panel_merf_gpboost_variance`, with the same known scales, fitted as a hierarchical
 Bayesian model instead. The posterior predictive integrates over the parameters, so its interval
@@ -110,81 +47,11 @@ seconds a fit against 37 for GPBoost's whole 20-setting grid.
 It also measures what a zeroed intercept costs on an unseen unit, what a frozen BART node returns
 after `pm.set_data`, and which of the two standard hierarchical precautions matter on this panel.
 
-![coverage against accuracy, and the two estimated scales](figures/panel_pymc_hierarchical.png)
+![coverage against accuracy, and the two estimated scales](figures/panel/panel_pymc_hierarchical.png)
 
 About five minutes on a laptop CPU.
 
-## uncertainty_attribution_shap
-
-There is no library for asking which features make a row uncertain, so the common recipe is to take
-the interval width as a target, fit a second model to it and read that model's SHAP values. This
-notebook runs that recipe on data where the answer is known in advance: six features, one job each,
-with the noise scale driven by one of them and a slice of another's range cut out of the training
-data.
-
-The recipe does rank the two real sources above the three features that drive no uncertainty, 35%
-and 29% against about 8% each. It does not separate them. The interval width is dominated by the
-data variance, which runs about 740x the knowledge variance here, so attributing the width
-attributes the noise; reading the knowledge column instead gives the hole feature less credit than
-the width already gave it. Attributing the true noise function, where the correct answer is not in
-doubt, still sends a quarter of the credit to a copy correlated 0.985 with the real driver.
-
-Distance to the nearest training row puts the hole feature first on all twelve seeds, at 48%
-against about 10% for everything else.
-
-![attribution of five uncertainty targets](figures/uncertainty_attribution_shap.png)
-
-Two interventions follow. Putting rows back into the hole cuts the error there by a factor of eight,
-three quarters of it from the first 5% of rows, but the interval width falls and then drifts back up
-to slightly above the width outside — the excess from thin coverage goes away and a floor remains.
-
-![putting the hole's rows back](figures/uncertainty_fill_sweep.png)
-
-Withholding columns turns the same design into the case where the driver of the spread was never
-recorded. Hide it and leave its correlated copy, and the copy takes 48% of the credit where
-renormalisation alone would give 20.5%, a confident answer naming a feature that causes nothing.
-Hide both and the width goes on varying and the surrogate goes on ranking, while the correlation
-between that width and the true noise level falls from 0.71 to zero.
-
-![what happens when the driver is withheld](figures/uncertainty_hidden_cause.png)
-
-About three minutes on a laptop CPU.
-
-## score_sensitivity_venn_abers
-
-The companion to `uncertainty_attribution_shap`, asking the same question from the other end: not
-what makes an interval wide, but how large a week-over-week move has to be before it is worth
-explaining. A week here is one refit on a training window that has rolled forward, with the seed
-held fixed, so every bit of movement comes from the data rather than from the fitting routine.
-
-Over twenty-four pairs of weeks the median customer's score moves 0.042 with nothing about them
-changed, and 43% move at least the five points the exercise set out to explain. The mean Venn-Abers
-width across the same customers is 0.008 — the 95th percentile of the noise is eighteen times it.
-That is not a defect in Venn-Abers: it describes the mapping from score to probability, not how far
-the score itself moves when the model is refit, and the fitted model is an input to it.
-
-![the week-over-week move with nothing changed](figures/score_noise_floor.png)
-
-Three levers, each scored on the floor and on what it buys at a fixed five percent false alarm rate.
-Carrying over 98% of last week's window still leaves a floor of 0.127. Sixty-four times the training
-data takes detection from 13% to 63%. Averaging ten customers reaches 59% for nothing, and fifty
-reach 99% — until the whole book drifting together, 0.007 here, puts a floor under that too.
-
-![what moves the floor](figures/score_noise_levers.png)
-
-Whether the floor can be spent unevenly is the last question, and it needs a per-row predictor of
-how much a customer moves. Conditioning on the score is what makes the test able to fail: `p(1 - p)`
-scores 0.28 overall and 0.01 inside bands of the score, against a permutation chance level of 0.08.
-The Venn-Abers width clears nothing either way. The distance to the nearest training row is the only
-production-available candidate above its own chance level once the score is held fixed, 0.12 against
-0.07, and over only the driving features 0.13 — real, and far too weak to carry a threshold: on
-held-out weeks no per-row rule beats one global threshold.
-
-![what predicts which customers move](figures/score_noise_predictors.png)
-
-About three minutes on a laptop CPU.
-
-## panel_irregular_kernel
+### panel_irregular_kernel
 
 Rows arrive as a Poisson process per unit, so the distance from a unit's last training row to a
 held-out row is a distribution rather than a fixed lead time, and the unit level process is
@@ -219,12 +86,12 @@ fits, reaches nominal coverage at none of four settings. And a two-seed six-sett
 what survives tuning from what does not, while a regular-grid control shows the defect belongs to the
 covariance assumption rather than to irregular arrival.
 
-![interval width against forecast horizon, and what the wrong covariance costs each way](figures/panel_irregular_kernel.png)
+![interval width against forecast horizon, and what the wrong covariance costs each way](figures/panel/panel_irregular_kernel.png)
 
 About forty minutes on an Apple-silicon laptop, most of it inside GPBoost, and longer on
 Colab's two free cores.
 
-## panel_informative_arrival
+### panel_informative_arrival
 
 Drops part 6's assumption that arrival times are ignorable: the intensity now depends on the unit
 effect itself, so a unit contributes more rows in the periods when its outcome runs high. The tilt
@@ -257,11 +124,11 @@ effect into the features is zero and the correction still goes, while features t
 within a unit maximise the leakage and collapse no less: the correction left at 31 leaves and 1000
 rounds is about 0.1 in all three regimes.
 
-![the same model scored on two targets, and what the diagnostic can see](figures/panel_informative_arrival.png)
+![the same model scored on two targets, and what the diagnostic can see](figures/panel/panel_informative_arrival.png)
 
 About twenty minutes on an Apple-silicon laptop, longer on Colab's two free cores.
 
-## panel_sequence_models
+### panel_sequence_models
 
 GRU-D's input decay is `gamma * x_last + (1 - gamma) * xbar` with `gamma = exp(-max(0, W d + b))`.
 That is the Ornstein-Uhlenbeck conditional mean part 6 arrived at, with the range fitted by gradient
@@ -348,13 +215,13 @@ The sequence arm runs in a separate process. `lightgbm` and `torch` each ship th
 runtime and on macOS whichever initialises first owns it, so importing `torch` before the first
 `lightgbm` call kills the interpreter with no traceback.
 
-![what the decay reaches, and what it does not](figures/panel_sequence_models.png)
+![what the decay reaches, and what it does not](figures/panel/panel_sequence_models.png)
 
 About eight minutes on an Apple-silicon laptop, longer on Colab's shared cores plus the torch
 install: the thirty GRU-D fits run one after another in a single-threaded subprocess, so more cores
 do not help.
 
-## panel_coverage_by_gap
+### panel_coverage_by_gap
 
 Split conformal on the panel from `panel_sequence_models` with its path memory off, one model
 throughout, changing only the rows the 90% interval is calibrated on. Calibrated on a backtest, one
@@ -369,11 +236,77 @@ by more than its errors do.
 Rows of one unit are not independent calibration draws: 159 rows from 10 units spread like about 61
 independent rows.
 
-![coverage by gap, and what a calibration unit is worth](figures/panel_coverage_by_gap.png)
+![coverage by gap, and what a calibration unit is worth](figures/panel/panel_coverage_by_gap.png)
 
 Under a minute on a laptop CPU.
 
-## catboost_boost_from_average
+## CatBoost
+
+| Notebook | Topic | Colab |
+|---|---|---|
+| [catboost_rmsewithuncertainty_conformal](notebooks/catboost/catboost_rmsewithuncertainty_conformal.ipynb) | Turning the CatBoost `RMSEWithUncertainty` sigma into a calibrated 90% interval, and which held-out diagnostic predicts a lopsided one | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost/catboost_rmsewithuncertainty_conformal.ipynb) |
+| [catboost_sglb_knowledge_uncertainty](notebooks/catboost/catboost_sglb_knowledge_uncertainty.ipynb) | Checking CatBoost's SGLB knowledge uncertainty against the actual error on a known function | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost/catboost_sglb_knowledge_uncertainty.ipynb) |
+| [catboost_quantile_multiquantile_cqr](notebooks/catboost/catboost_quantile_multiquantile_cqr.ipynb) | What a CatBoost quantile band actually covers, when `MultiQuantile` is enough and when it needs conformalizing | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost/catboost_quantile_multiquantile_cqr.ipynb) |
+| [catboost_boost_from_average](notebooks/catboost/catboost_boost_from_average.ipynb) | What CatBoost's `boost_from_average` fixes in a model tuned on a ranking metric, and what it leaves | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost/catboost_boost_from_average.ipynb) |
+
+### catboost_rmsewithuncertainty_conformal
+
+Builds a 90% interval from the `RMSEWithUncertainty` head three ways (raw, sigma-normalized
+conformal, CQR at nominal 5/95 and 10/90) on one synthetic and two public datasets, measuring
+coverage, width and where the misses land.
+
+It also tests which held-out diagnostic predicts a lopsided interval. Skewness of the normalized
+residuals does not: on diamonds it ranges 0.38 to 5.58 across four hyperparameter settings while
+the miss imbalance stays between 0.4 and 0.8 points. Bowley skew and the ratio of the 5th and 95th
+percentiles do.
+
+![coverage split](figures/catboost/catboost_rmsewithuncertainty_conformal.png)
+
+About five minutes on a free Colab CPU.
+
+### catboost_sglb_knowledge_uncertainty
+
+`posterior_sampling=True` plus `virtual_ensembles_predict` reports knowledge uncertainty from a
+single model. This notebook measures that signal against the truth: the data comes from a known and
+bounded 2D function, so every test point has both a reported uncertainty and a real error, and no
+region is intrinsically harder to predict than another.
+
+Both uncertainty columns are variances, so the notebook square-roots them before comparing them
+with an error in the units of the target. In a gap cut out of the training data the model is 8.2x
+more wrong than on covered data while the reported uncertainty is 1.1x. Past the edge of the range
+the error is 20x, the signal is one constant across all 800 test points, and the total uncertainty
+comes to 0.66x, below the covered level on all ten runs. A nearest-neighbour distance to the
+training set ranks the error at 0.78 against 0.00 for knowledge uncertainty.
+
+![knowledge uncertainty against error](figures/catboost/catboost_sglb_knowledge_uncertainty.png)
+
+About a minute on a free Colab CPU.
+
+### catboost_quantile_multiquantile_cqr
+
+The same 90% band built three ways — two separate `Quantile` models, `MultiQuantile` on the outer
+pair, and `MultiQuantile` on ten levels — across the three datasets from the conformalized quantile
+regression paper, at three hyperparameter settings and eight seeds.
+
+None of the 27 seed-averaged raw bands reached the level it claimed; they run from 55.6% to 89.8%.
+How hard the trees are fitted lowers coverage on every arm, and the ten-level arm falls furthest:
+on concrete at the hardest setting the gap between arms is wider than the gap between settings.
+Conformalizing centres every dataset on 90% and holds there across a training sweep where the raw
+band climbs from 61% at a 500-row pool to 86% at 36,584.
+
+Asking one model for ten levels ran about 3x faster than fitting ten and crossed far less often, on
+4% to 74% of rows against 24% to 97%. It is still not the best answer to crossing: sorting each row
+of predictions removes crossings outright and lands the individual levels closer than the joint
+model as fitted in all nine settings, and closer than the joint model sorted too in eight. A
+synthetic case separates where the shared structure shows from where it costs: at the light setting
+the arms are within 0.001 of each other on pinball loss, and only once the fit is hard does sharing
+cost, about 2% for the pair and 7% for ten levels.
+
+![raw and conformalized coverage against training size](figures/catboost/catboost_quantile_multiquantile_cqr.png)
+
+About fifteen minutes on a laptop CPU.
+
+### catboost_boost_from_average
 
 CatBoost starts `Logloss` and `MultiClass` from uniform probabilities, where XGBoost 3.2 and
 LightGBM 4.6 start from the class prior (LightGBM's docs list its `boost_from_average` for binary and
@@ -391,13 +324,20 @@ got a small training budget, it brings CatBoost's gap from -0.096 to -0.025, lev
 (-0.038) and LightGBM (-0.034). What it cannot fix is the small budget itself, which a ranking
 metric does not penalise.
 
-![Brier score from each start](figures/catboost_boost_from_average_brier.png)
-![Confidence gap from each start](figures/catboost_boost_from_average_gap.png)
-![ECE from each start](figures/catboost_boost_from_average_ece.png)
+![Brier score from each start](figures/catboost/catboost_boost_from_average_brier.png)
+![Confidence gap from each start](figures/catboost/catboost_boost_from_average_gap.png)
+![ECE from each start](figures/catboost/catboost_boost_from_average_ece.png)
 
 Under a minute of compute on a laptop CPU; a free Colab CPU is several times slower.
 
-## model_comparison_paired_cv
+## Model comparison
+
+| Notebook | Topic | Colab |
+|---|---|---|
+| [model_comparison_paired_cv](notebooks/model_comparison/model_comparison_paired_cv.ipynb) | Why a t-test over cross-validation folds reports a difference that is not there, what pairing is actually worth, and which standard error survives a redraw | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison/model_comparison_paired_cv.ipynb) |
+| [model_comparison_decision](notebooks/model_comparison/model_comparison_decision.ipynb) | Turning a paired comparison over many datasets into a decision: the margin set first, equivalence as a verdict, and the three things that move it without touching the data | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison/model_comparison_decision.ipynb) |
+
+### model_comparison_paired_cv
 
 RandomForest against ExtraTrees on `breast_cancer`, Brier score per fold, 10 x 10 repeated stratified
 CV, with a seed of its own for every forest fit. The two models' fold scores correlate 0.96, so
@@ -419,12 +359,12 @@ which is 1.81x the naive standard error and 0.67x the corrected one. The naive 9
 average of those samples 80% of the time, the corrected one 100%, so the correction bounds the
 uncertainty rather than pricing it.
 
-![the same folds under four standard errors](figures/model_comparison_paired_cv.png)
+![the same folds under four standard errors](figures/model_comparison/model_comparison_paired_cv.png)
 
 About five minutes on a laptop CPU, longer on Colab's shared cores: nearly all of it is the 2900
 model fits, which run at `n_jobs=2`.
 
-## model_comparison_decision
+### model_comparison_decision
 
 CatBoost tuned from a uniform start against the same model re-tuned from the class prior, one paired
 difference per dataset over 108 datasets of a small-data benchmark, read as a decision rather than as
@@ -446,6 +386,83 @@ clustering because it only catches variants that differ by a trailing token, mov
 interval to -0.0258 to -0.0086 and flips it to unclear, by moving the mean rather than by widening
 the interval.
 
-![the same pair under four readings](figures/model_comparison_decision.png)
+![the same pair under four readings](figures/model_comparison/model_comparison_decision.png)
 
 Seconds on any CPU: it reads one published table and does arithmetic.
+## Uncertainty
+
+| Notebook | Topic | Colab |
+|---|---|---|
+| [uncertainty_attribution_shap](notebooks/uncertainty/uncertainty_attribution_shap.ipynb) | Whether attributing a prediction interval's width with SHAP recovers the features that actually drive the uncertainty | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/uncertainty/uncertainty_attribution_shap.ipynb) |
+| [score_sensitivity_venn_abers](notebooks/uncertainty/score_sensitivity_venn_abers.ipynb) | How large a week-over-week move in a propensity score has to be before it means anything, and whether a Venn-Abers interval tells you | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/uncertainty/score_sensitivity_venn_abers.ipynb) |
+
+### uncertainty_attribution_shap
+
+There is no library for asking which features make a row uncertain, so the common recipe is to take
+the interval width as a target, fit a second model to it and read that model's SHAP values. This
+notebook runs that recipe on data where the answer is known in advance: six features, one job each,
+with the noise scale driven by one of them and a slice of another's range cut out of the training
+data.
+
+The recipe does rank the two real sources above the three features that drive no uncertainty, 35%
+and 29% against about 8% each. It does not separate them. The interval width is dominated by the
+data variance, which runs about 740x the knowledge variance here, so attributing the width
+attributes the noise; reading the knowledge column instead gives the hole feature less credit than
+the width already gave it. Attributing the true noise function, where the correct answer is not in
+doubt, still sends a quarter of the credit to a copy correlated 0.985 with the real driver.
+
+Distance to the nearest training row puts the hole feature first on all twelve seeds, at 48%
+against about 10% for everything else.
+
+![attribution of five uncertainty targets](figures/uncertainty/uncertainty_attribution_shap.png)
+
+Two interventions follow. Putting rows back into the hole cuts the error there by a factor of eight,
+three quarters of it from the first 5% of rows, but the interval width falls and then drifts back up
+to slightly above the width outside — the excess from thin coverage goes away and a floor remains.
+
+![putting the hole's rows back](figures/uncertainty/uncertainty_fill_sweep.png)
+
+Withholding columns turns the same design into the case where the driver of the spread was never
+recorded. Hide it and leave its correlated copy, and the copy takes 48% of the credit where
+renormalisation alone would give 20.5%, a confident answer naming a feature that causes nothing.
+Hide both and the width goes on varying and the surrogate goes on ranking, while the correlation
+between that width and the true noise level falls from 0.71 to zero.
+
+![what happens when the driver is withheld](figures/uncertainty/uncertainty_hidden_cause.png)
+
+About three minutes on a laptop CPU.
+
+### score_sensitivity_venn_abers
+
+The companion to `uncertainty_attribution_shap`, asking the same question from the other end: not
+what makes an interval wide, but how large a week-over-week move has to be before it is worth
+explaining. A week here is one refit on a training window that has rolled forward, with the seed
+held fixed, so every bit of movement comes from the data rather than from the fitting routine.
+
+Over twenty-four pairs of weeks the median customer's score moves 0.042 with nothing about them
+changed, and 43% move at least the five points the exercise set out to explain. The mean Venn-Abers
+width across the same customers is 0.008 — the 95th percentile of the noise is eighteen times it.
+That is not a defect in Venn-Abers: it describes the mapping from score to probability, not how far
+the score itself moves when the model is refit, and the fitted model is an input to it.
+
+![the week-over-week move with nothing changed](figures/uncertainty/score_noise_floor.png)
+
+Three levers, each scored on the floor and on what it buys at a fixed five percent false alarm rate.
+Carrying over 98% of last week's window still leaves a floor of 0.127. Sixty-four times the training
+data takes detection from 13% to 63%. Averaging ten customers reaches 59% for nothing, and fifty
+reach 99% — until the whole book drifting together, 0.007 here, puts a floor under that too.
+
+![what moves the floor](figures/uncertainty/score_noise_levers.png)
+
+Whether the floor can be spent unevenly is the last question, and it needs a per-row predictor of
+how much a customer moves. Conditioning on the score is what makes the test able to fail: `p(1 - p)`
+scores 0.28 overall and 0.01 inside bands of the score, against a permutation chance level of 0.08.
+The Venn-Abers width clears nothing either way. The distance to the nearest training row is the only
+production-available candidate above its own chance level once the score is held fixed, 0.12 against
+0.07, and over only the driving features 0.13 — real, and far too weak to carry a threshold: on
+held-out weeks no per-row rule beats one global threshold.
+
+![what predicts which customers move](figures/uncertainty/score_noise_predictors.png)
+
+About three minutes on a laptop CPU.
+
