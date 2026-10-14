@@ -248,6 +248,7 @@ Under a minute on a laptop CPU.
 | [catboost_sglb_knowledge_uncertainty](notebooks/catboost/catboost_sglb_knowledge_uncertainty.ipynb) | Checking CatBoost's SGLB knowledge uncertainty against the actual error on a known function | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost/catboost_sglb_knowledge_uncertainty.ipynb) |
 | [catboost_quantile_multiquantile_cqr](notebooks/catboost/catboost_quantile_multiquantile_cqr.ipynb) | What a CatBoost quantile band actually covers, when `MultiQuantile` is enough and when it needs conformalizing | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost/catboost_quantile_multiquantile_cqr.ipynb) |
 | [catboost_boost_from_average](notebooks/catboost/catboost_boost_from_average.ipynb) | What CatBoost's `boost_from_average` fixes in a model tuned on a ranking metric, and what it leaves | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost/catboost_boost_from_average.ipynb) |
+| [catboost_interventional_shap](notebooks/catboost/catboost_interventional_shap.ipynb) | What interventional SHAP says about a model, which predictions it averages, and what CatBoost's `Exact` computes | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/catboost/catboost_interventional_shap.ipynb) |
 
 ### catboost_rmsewithuncertainty_conformal
 
@@ -329,6 +330,39 @@ metric does not penalise.
 ![ECE from each start](figures/catboost/catboost_boost_from_average_ece.png)
 
 Under a minute of compute on a laptop CPU; a free Colab CPU is several times slower.
+
+### catboost_interventional_shap
+
+Three quantities share the name SHAP: interventional, observational and path-dependent TreeSHAP.
+On Gaussian data with a known truth and a correlated non-cause `x2`, the notebook computes all
+three on the same CatBoost fits. Interventional credit for `x2` follows the fit: 0.03 when the model
+barely splits on it, 0.10 when `rsm` forces it to, and exactly zero when `x2` is ignored. An
+observational oracle gives it about 0.7 in all three cases, because the information is in the data
+whether or not anyone reads it. Path-dependent sits between the two, closer to interventional.
+
+The interventional number is an average of predictions on hybrid rows. At correlation 0.9, of the
+hybrids that swap `x2` alone two fifths lie beyond a Mahalanobis distance that 3% of real rows
+reach and an eighth beyond the farthest training row; over all of them the error against the
+truth is twice that on real rows, and in the farthest bin the fits disagree with each other most.
+At equal distance a hybrid is predicted about as well as a real row; what differs is where they go.
+The background is part of the definition: it sets the base value, what a row is explained relative
+to, and a sampling error that falls as `1 / sqrt(n)` because the attribution is linear in the
+background.
+
+CatBoost's `shap_calc_type="Exact"` turns out to be the interventional value with the training set
+as background, read off the leaf weights of its symmetric trees: it matches `reference_data` on
+the training set to floating-point error, with no subsampling error and in a fraction of the time.
+The background is the weighted training set if the fit was weighted, and `init_model`, CTR splits
+on categorical features and `model_output="Probability"` are its exceptions. The shap library's
+interventional path for CatBoost is an order of magnitude slower than the native call on one
+thread and more against CatBoost's default threading, drops the model's bias from its base value,
+and fails on trees without a split and on non-symmetric trees. On a categorical model the native
+value is not the interventional value of the raw inputs until `max_ctr_complexity` is set to one,
+because CatBoost's default CTRs on feature combinations couple the inputs.
+
+![where the hybrids take the model, and three numbers for x2](figures/catboost/catboost_interventional_shap.png)
+
+Under a minute on a laptop CPU, several times that on a free Colab CPU.
 
 ## Model comparison
 
