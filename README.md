@@ -500,3 +500,28 @@ held-out weeks no per-row rule beats one global threshold.
 
 About three minutes on a laptop CPU.
 
+
+## LightGBM
+
+| Notebook | Topic | Colab |
+|---|---|---|
+| [lightgbm_linear_tree_regularizers](notebooks/lightgbm/lightgbm_linear_tree_regularizers.ipynb) | Which LightGBM regularizers keep exact TreeSHAP and monotone constraints, and what `linear_tree` loses | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/lightgbm/lightgbm_linear_tree_regularizers.ipynb) |
+
+### lightgbm_linear_tree_regularizers
+
+LightGBM's regularizers shape trees whose leaves are constants; `linear_tree` fits a linear model in
+each leaf. On a toy that increases in `x0`, the notebook runs two checks over three seeds for each
+configuration: whether `pred_contrib` sums to the raw score, and whether an increasing constraint
+on `x0` holds along a sweep of 200 rows.
+
+`reg_lambda`, `path_smooth`, `min_child_samples`, `max_depth`, row and column subsampling,
+`extra_trees`, `dart` and `goss` all pass both: the sum matches to below 1e-13 and no row ever
+steps down. With `linear_tree` LightGBM and `shap.TreeExplainer` refuse to compute TreeSHAP, every
+sampled row steps down somewhere, and a large share of all grid steps go down. `linear_lambda=10`
+cuts that share but does not remove it. Most of the down steps happen with the row in the same leaves,
+where the summed leaf coefficients on `x0` turn negative; the largest drops come where the row changes
+leaf and the leaf models on the two sides do not meet.
+
+![one row along x0, constant leaves vs linear_tree](figures/lightgbm/lightgbm_linear_tree_monotone.png)
+
+Under a minute on a laptop CPU, several times that on a free Colab CPU.
