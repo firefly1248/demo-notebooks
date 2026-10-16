@@ -344,7 +344,7 @@ The interventional number is an average of predictions on hybrid rows. At correl
 hybrids that swap `x2` alone two fifths lie beyond a Mahalanobis distance that 3% of real rows
 reach and an eighth beyond the farthest training row; over all of them the error against the
 truth is twice that on real rows, and in the farthest bin the fits disagree with each other most.
-At equal distance a hybrid is predicted about as well as a real row; what differs is where they go.
+In the middle distance bin a hybrid is predicted better than a real row: real rows get that far through a thin tail of the data, hybrids with ordinary coordinates off the correlation ridge. What separates them is where they sit.
 The background is part of the definition: it sets the base value, what a row is explained relative
 to, and a sampling error that falls as `1 / sqrt(n)` because the attribution is linear in the
 background.
@@ -359,6 +359,8 @@ thread and more against CatBoost's default threading, drops the model's bias fro
 and fails on trees without a split and on non-symmetric trees. On a categorical model the native
 value is not the interventional value of the raw inputs until `max_ctr_complexity` is set to one,
 because CatBoost's default CTRs on feature combinations couple the inputs.
+
+A last cell shows that an interventional attribution is not a causal effect: with the confounder hidden from the model, the slope of the attribution to `x2` is +1.29 against a true effect of -0.5, and -0.41 when the confounder is visible.
 
 ![where the hybrids take the model, and three numbers for x2](figures/catboost/catboost_interventional_shap.png)
 
