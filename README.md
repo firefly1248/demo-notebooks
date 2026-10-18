@@ -527,3 +527,23 @@ leaf and the leaf models on the two sides do not meet.
 ![one row along x0, constant leaves vs linear_tree](figures/lightgbm/lightgbm_linear_tree_monotone.png)
 
 Under a minute on a laptop CPU, several times that on a free Colab CPU.
+
+
+## Causal inference
+
+| Notebook | Topic | Colab |
+|---|---|---|
+| [twfe_dml_demo_with_tuning](notebooks/causal/twfe_dml_demo_with_tuning.ipynb) | What two-way fixed effects removes from a panel, what it leaves, and how DML with a random forest and Optuna-tuned nuisance models handles the rest | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/causal/twfe_dml_demo_with_tuning.ipynb) |
+
+### twfe_dml_demo_with_tuning
+
+A synthetic panel of 20,000 entities over 12 periods with a true effect of 1.0, an unobserved
+entity-level confounder and observed covariates that enter selection and outcome through their
+squares. Naive OLS gives 2.31 and TWFE with linear controls 2.49: demeaning removes the
+unobserved confounder, but the quadratic terms stay. TWFE with DML on raw demeaned covariates gives
+1.82. Adding the squares computed before demeaning gives 1.002, with a 95% interval that covers 1.0.
+Tuning the random forest with Optuna on R-loss or on the variance of the orthogonal score picks the
+same hyperparameters and gives 1.003.
+
+About four and a half hours on a 14-core laptop CPU; random-forest cross-fitting on 240,000 rows
+dominates. Lower `N_ENTITIES` for a quick run on Colab.
