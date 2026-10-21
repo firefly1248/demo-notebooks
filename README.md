@@ -372,6 +372,7 @@ Under a minute on a laptop CPU, several times that on a free Colab CPU.
 |---|---|---|
 | [model_comparison_paired_cv](notebooks/model_comparison/model_comparison_paired_cv.ipynb) | Why a t-test over cross-validation folds reports a difference that is not there, what pairing is actually worth, and which standard error survives a redraw | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison/model_comparison_paired_cv.ipynb) |
 | [model_comparison_decision](notebooks/model_comparison/model_comparison_decision.ipynb) | Turning a paired comparison over many datasets into a decision: the margin set first, equivalence as a verdict, and the three things that move it without touching the data | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison/model_comparison_decision.ipynb) |
+| [model_comparison_proportion_bounds](notebooks/model_comparison/model_comparison_proportion_bounds.ipynb) | Reading one test set: whether a model's share clears a threshold, which interval and confidence level that takes, and whether B beats A on the same rows | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison/model_comparison_proportion_bounds.ipynb) |
 
 ### model_comparison_paired_cv
 
@@ -425,6 +426,25 @@ the interval.
 ![the same pair under four readings](figures/model_comparison/model_comparison_decision.png)
 
 Seconds on any CPU: it reads one published table and does arithmetic.
+
+### model_comparison_proportion_bounds
+
+Two questions about one labelled test set, answered from counts alone. Does the true share clear a
+threshold of 0.90? At 29 of 30 the one-sided 95% Wald bound says yes and Wilson's says no; at 30 of
+30 Wald's interval has zero width. Summing exact binomial probabilities shows how often each bound
+lies above the truth at n = 30: Wald's miss rate climbs towards one as the true share does, Wilson's
+stays near nominal and turns cautious at the top. The library trap is the confidence level:
+`proportion_confint(alpha=0.05)` is a one-sided 97.5% bound at its lower end.
+
+A bar on the lower bound is stricter than the same bar on the observed share, and lowering the
+confidence level to reach it raises the chance of passing a model that sits exactly on the
+threshold. The second question is paired: two models scored on the same 1000 rows, where an
+unpaired test overstates the variance of the difference and McNemar's test finds it significant.
+Against a margin of one accuracy point set in advance, the same difference is still unclear.
+
+![how often a one-sided 95% lower bound lies above the truth](figures/model_comparison/model_comparison_proportion_bounds.png)
+
+Seconds on any CPU: it does arithmetic on counts.
 ## Uncertainty
 
 | Notebook | Topic | Colab |
