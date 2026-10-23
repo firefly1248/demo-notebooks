@@ -1,0 +1,59 @@
+{
+ "versions": {
+  "python": "3.12.12",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "numpy": "2.4.6",
+  "pandas": "3.0.5",
+  "scipy": "1.18.1",
+  "scikit-learn": "1.9.0",
+  "catboost": "1.2.10",
+  "lightgbm": "4.7.0",
+  "optuna": "4.9.0"
+ },
+ "sdb_commit": "0227b621e4cfbd4eed32797b9054484defed794f",
+ "openml_ids": {
+  "adult": 1590,
+  "electricity": 151,
+  "bank-marketing": 1461,
+  "credit-default": 42477,
+  "higgs": 23512,
+  "covertype": 44121,
+  "jannis": 44131,
+  "miniboone": 41150,
+  "road-safety": 45038
+ },
+ "b_datasets": [
+  "jannis",
+  "higgs",
+  "credit-default",
+  "road-safety",
+  "bank-marketing",
+  "covertype",
+  "electricity",
+  "adult"
+ ],
+ "constants": {
+  "K_SEEDS": 40,
+  "A_TEST_SDB": 1000,
+  "A_TEST_POOL": 5000,
+  "N_TRAIN": 5000,
+  "B_H": 20000,
+  "B_V": 1000,
+  "B_TRIALS": 200,
+  "B_ITERATIONS": 300,
+  "B_PREFIXES": [
+   1,
+   3,
+   7,
+   15,
+   30,
+   50,
+   100,
+   200
+  ],
+  "B_TOP": 5,
+  "B_RERUN_SEEDS": 5,
+  "B_STUDIES": 10,
+  "WORKERS": 7
+ }
+}

@@ -1,0 +1,123 @@
+{
+ "versions": {
+  "python": "3.12.12",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "numpy": "2.4.6",
+  "pandas": "3.0.5",
+  "scipy": "1.18.1",
+  "scikit-learn": "1.9.0",
+  "catboost": "1.2.10",
+  "lightgbm": "4.7.0",
+  "optuna": "4.9.0"
+ },
+ "cases": [
+  {
+   "source": "sdb",
+   "dataset": "spambase",
+   "family": "catboost",
+   "same_process_identical": true,
+   "two_processes_identical": true,
+   "max_abs_diff_two_processes": 0.0,
+   "other_seed_rows_changed": 0.002
+  },
+  {
+   "source": "sdb",
+   "dataset": "spambase",
+   "family": "catboost_sub",
+   "same_process_identical": true,
+   "two_processes_identical": true,
+   "max_abs_diff_two_processes": 0.0,
+   "other_seed_rows_changed": 0.005
+  },
+  {
+   "source": "sdb",
+   "dataset": "spambase",
+   "family": "lightgbm_bag",
+   "same_process_identical": true,
+   "two_processes_identical": true,
+   "max_abs_diff_two_processes": 0.0,
+   "other_seed_rows_changed": 0.008
+  },
+  {
+   "source": "sdb",
+   "dataset": "spambase",
+   "family": "mlp",
+   "same_process_identical": true,
+   "two_processes_identical": true,
+   "max_abs_diff_two_processes": 0.0,
+   "other_seed_rows_changed": 0.034
+  },
+  {
+   "source": "sdb",
+   "dataset": "wine-quality-5class",
+   "family": "catboost",
+   "same_process_identical": true,
+   "two_processes_identical": true,
+   "max_abs_diff_two_processes": 0.0,
+   "other_seed_rows_changed": 0.063
+  },
+  {
+   "source": "sdb",
+   "dataset": "wine-quality-5class",
+   "family": "catboost_sub",
+   "same_process_identical": true,
+   "two_processes_identical": true,
+   "max_abs_diff_two_processes": 0.0,
+   "other_seed_rows_changed": 0.074
+  },
+  {
+   "source": "sdb",
+   "dataset": "wine-quality-5class",
+   "family": "lightgbm_bag",
+   "same_process_identical": true,
+   "two_processes_identical": true,
+   "max_abs_diff_two_processes": 0.0,
+   "other_seed_rows_changed": 0.063
+  },
+  {
+   "source": "sdb",
+   "dataset": "wine-quality-5class",
+   "family": "mlp",
+   "same_process_identical": true,
+   "two_processes_identical": true,
+   "max_abs_diff_two_processes": 0.0,
+   "other_seed_rows_changed": 0.187
+  },
+  {
+   "source": "openml",
+   "dataset": "adult",
+   "family": "catboost",
+   "same_process_identical": true,
+   "two_processes_identical": true,
+   "max_abs_diff_two_processes": 0.0,
+   "other_seed_rows_changed": 0.0094
+  },
+  {
+   "source": "openml",
+   "dataset": "adult",
+   "family": "catboost_sub",
+   "same_process_identical": true,
+   "two_processes_identical": true,
+   "max_abs_diff_two_processes": 0.0,
+   "other_seed_rows_changed": 0.01
+  },
+  {
+   "source": "openml",
+   "dataset": "adult",
+   "family": "lightgbm_bag",
+   "same_process_identical": true,
+   "two_processes_identical": true,
+   "max_abs_diff_two_processes": 0.0,
+   "other_seed_rows_changed": 0.0294
+  },
+  {
+   "source": "openml",
+   "dataset": "adult",
+   "family": "mlp",
+   "same_process_identical": true,
+   "two_processes_identical": true,
+   "max_abs_diff_two_processes": 0.0,
+   "other_seed_rows_changed": 0.0878
+  }
+ ]
+}
