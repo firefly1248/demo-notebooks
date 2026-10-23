@@ -472,6 +472,7 @@ more validation sets.
 
 Seconds on a laptop CPU: the notebook reads 2.5 MB of cached results. The experiments behind the cache,
 `scripts/run_noise_experiment.py`, took about 6 hours on 7 CPU cores.
+
 ## Uncertainty
 
 | Notebook | Topic | Colab |
