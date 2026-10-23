@@ -373,6 +373,7 @@ Under a minute on a laptop CPU, several times that on a free Colab CPU.
 | [model_comparison_paired_cv](notebooks/model_comparison/model_comparison_paired_cv.ipynb) | Why a t-test over cross-validation folds reports a difference that is not there, what pairing is actually worth, and which standard error survives a redraw | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison/model_comparison_paired_cv.ipynb) |
 | [model_comparison_decision](notebooks/model_comparison/model_comparison_decision.ipynb) | Turning a paired comparison over many datasets into a decision: the margin set first, equivalence as a verdict, and the three things that move it without touching the data | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison/model_comparison_decision.ipynb) |
 | [model_comparison_proportion_bounds](notebooks/model_comparison/model_comparison_proportion_bounds.ipynb) | Reading one test set: whether a model's share clears a threshold, which interval and confidence level that takes, and whether B beats A on the same rows | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison/model_comparison_proportion_bounds.ipynb) |
+| [model_comparison_run_noise](notebooks/model_comparison/model_comparison_run_noise.ipynb) | Run noise on real data: how far the seed moves accuracy, how often two seeds of one procedure test as different, and how far a hyperparameter search's winner reads above its true accuracy | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/model_comparison/model_comparison_run_noise.ipynb) |
 
 ### model_comparison_paired_cv
 
@@ -445,6 +446,32 @@ Against a margin of one accuracy point set in advance, the same difference is st
 ![how often a one-sided 95% lower bound lies above the truth](figures/model_comparison/model_comparison_proportion_bounds.png)
 
 Seconds on any CPU: it does arithmetic on counts.
+
+### model_comparison_run_noise
+
+Real datasets and real models, nothing simulated: 108 SmallDataBenchmarks datasets and 9 large
+binary OpenML datasets, each of the large ones trained on 5000 rows. Four families: CatBoost with
+default parameters, CatBoost with Bernoulli row and feature sampling, LightGBM with bagging and a
+small MLP, 40 seeds each with the training rows fixed. On the three datasets checked, the same seed
+reproduced every prediction bit for bit on CPU. For the tree ensembles no shift of the population
+accuracy by the seed is detectable at the median; the SD across seeds on a test set comes from which
+few unstable rows flip. On the large datasets two tree runs disagree on so few rows that McNemar's
+test on them stays below its nominal 5% at the median, from 200 to 1000 test rows, and reaches it
+for LightGBM at 5000. The MLP, whose seed does shift its accuracy on the large datasets, passes
+nominal once the test set is large. Welch's test on five seeds against five stays near nominal.
+
+A CatBoost search with Optuna, TPE and Random, 200 trials repeated ten times on each of 8 datasets,
+with a 20 000-row holdout the search never sees: the winner's validation score runs further ahead
+of its holdout accuracy the more trials there are, and from 50 to 200 trials the reported score
+moves several times more than the winner's real accuracy. Re-running the top five with fresh seeds
+on fresh rows lowers the loss against the best trial by 0.04 to 0.19 points at the median over the 8
+datasets, not on every dataset and not clearly at the smallest budgets, for 25 more fits and two
+more validation sets.
+
+![false alarms between seeds, and the search winner's inflation](figures/model_comparison/model_comparison_run_noise.png)
+
+Seconds on a laptop CPU: the notebook reads 2.5 MB of cached results. The experiments behind the cache,
+`scripts/run_noise_experiment.py`, took about 6 hours on 7 CPU cores.
 ## Uncertainty
 
 | Notebook | Topic | Colab |
