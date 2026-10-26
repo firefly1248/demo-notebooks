@@ -594,8 +594,9 @@ the switch to `Ordered` below 50 000 rows is a GPU rule. XGBoost's `min_child_we
 least `1 / (p (1 - p))` rows per leaf on the first tree only, and LightGBM's `min_data_in_leaf=20`
 is not a row count after the first tree on binary data. With defaults XGBoost and LightGBM give the
 same predictions for every seed; CatBoost does only with both `bootstrap_type="No"` and
-`random_strength=0`. On 500 to 10 000 rows of `adult` all three overfit, XGBoost the most and
-CatBoost the least.
+`random_strength=0`. On 500 to 10 000 rows of `adult` all three overfit with their defaults, XGBoost
+the most and CatBoost the least; at a matched learning rate of 0.1 LightGBM overfits more than XGBoost,
+so the order of the defaults comes from the learning rate, not the growth policy.
 
 ![test log loss against the number of trees, default parameters](figures/gbdt/gbdt_defaults_curves.png)
 
