@@ -590,8 +590,9 @@ trees at a fixed learning rate of 0.3 and 0.1, and `xgb.train` builds 10 rounds.
 trees at a rate it computes from the rows and the iterations, 0.008 on 500 rows and 0.099 on 200 000
 rows at 1000 iterations, and it computes the rate differently once an `eval_set` is passed: on
 `phoneme` 0.017 without it and 0.042 with it. On CPU CatBoost boosts in `Plain` mode at every size;
-the switch to `Ordered` below 50 000 rows is a GPU rule. XGBoost's `min_child_weight=1` means at
-least `1 / (p (1 - p))` rows per leaf on the first tree only, and LightGBM's `min_data_in_leaf=20`
+the switch to `Ordered` below 50 000 rows applies on GPU only, and only from 500 iterations.
+XGBoost's `min_child_weight=1` means at least `1 / (p (1 - p))` rows per leaf on the first tree
+only, and LightGBM's `min_data_in_leaf=20`
 is not a row count after the first tree on binary data. With defaults XGBoost and LightGBM give the
 same predictions for every seed; CatBoost does only with both `bootstrap_type="No"` and
 `random_strength=0`. On 500 to 10 000 rows of `adult` all three overfit with their defaults, XGBoost
