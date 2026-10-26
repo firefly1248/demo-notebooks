@@ -597,7 +597,10 @@ is not a row count after the first tree on binary data. With defaults XGBoost an
 same predictions for every seed; CatBoost does only with both `bootstrap_type="No"` and
 `random_strength=0`. On 500 to 10 000 rows of `adult` all three overfit with their defaults, XGBoost
 the most and CatBoost the least; at a matched learning rate of 0.1 LightGBM overfits more than XGBoost,
-so the order of the defaults comes from the learning rate, not the growth policy.
+so the order of the defaults comes from the learning rate, not the growth policy. Over five splits of
+`phoneme` the three defaults differ by 0.010 in mean test log loss and the best library changes with
+the split; an `eval_set` moves CatBoost's test log loss by about as much, and the sign depends on the
+split.
 
 ![test log loss against the number of trees, default parameters](figures/gbdt/gbdt_defaults_curves.png)
 
