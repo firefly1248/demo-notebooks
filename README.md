@@ -556,6 +556,7 @@ About three minutes on a laptop CPU.
 | Notebook | Topic | Colab |
 |---|---|---|
 | [lightgbm_linear_tree_regularizers](notebooks/lightgbm/lightgbm_linear_tree_regularizers.ipynb) | Which LightGBM regularizers keep exact TreeSHAP and monotone constraints, and what `linear_tree` loses | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/lightgbm/lightgbm_linear_tree_regularizers.ipynb) |
+| [lightgbm_dart_slice_plot](notebooks/lightgbm/lightgbm_dart_slice_plot.ipynb) | Why DART can look better than `gbdt` and `goss` on an Optuna slice plot: the step `learning_rate / (1 + k)`, what a learning-rate range that starts at 0.1 does to it, and how much of the picture is the search itself | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/lightgbm/lightgbm_dart_slice_plot.ipynb) |
 
 ### lightgbm_linear_tree_regularizers
 
@@ -575,6 +576,35 @@ leaf and the leaf models on the two sides do not meet.
 ![one row along x0, constant leaves vs linear_tree](figures/lightgbm/lightgbm_linear_tree_monotone.png)
 
 Under a minute on a laptop CPU, several times that on a free Colab CPU.
+
+### lightgbm_dart_slice_plot
+
+LightGBM 4.6.0 adds each new DART tree with weight `learning_rate / (1 + k)`, where `k` is the number
+of trees dropped that round, so DART's step shrinks as training goes on. The notebook asks whether
+that is why DART trials sit lower than `gbdt` and `goss` trials on an Optuna slice plot when the
+learning rate is searched on [0.1, 1]. The setup is a common one: `boosting_type` as a categorical
+parameter in one TPE study, 50 to 300 trees, no early stopping, selection on validation log loss. The
+data are Bank Marketing, six more OpenML datasets and a synthetic generator with label noise from 0
+to 0.4, over three seeds.
+
+At a fixed number of trees the step is real. DART's best learning rate in a sweep is a median 3.1
+times `gbdt`'s, where the weights predict 3.6, and it is higher on all seven real datasets. On the
+synthetic data DART leads `gbdt` on [0.1, 1] by an amount that grows with the label noise, and is
+level on [0.001, 1]. In the Optuna studies the range does change who looks better: DART's best trial
+beats `gbdt`'s in 14 of 18 studies on [0.1, 1] and in 2 of 18 on [0.001, 1]. But in 35 of 36 studies
+DART wins exactly when TPE gave it the most trials, and with one study per mode on Bank Marketing its
+lead on [0.1, 1] is no longer distinguishable from zero. Of the three predictions written before the
+run, one fails in the studies and holds in the sweeps: that DART's lead on [0.1, 1] grows with the
+noise. The notebook shows a mechanism, not how often it decides a real search; for DART on 131 small
+datasets with nested cross-validation see
+[SmallDataBenchmarks](https://github.com/firefly1248/SmallDataBenchmarks/blob/master/Findings_notes.md#dart-buys-nothing-over-tuned-lightgbm-or-xgboost).
+
+![best learning rate and DART's gap to gbdt against label noise](figures/lightgbm/lightgbm_dart_slice_plot.png)
+
+Written for lightgbm 4.6.0, optuna 4.7.0 and scikit-learn 1.7.2. The full run took about 5.5 hours on
+14 CPU cores, plus about 20 minutes for the one-study-per-mode control. The notebook reads the
+cached results in `results/lightgbm/dart_slice_plot/` and runs in under a minute in a clone, in about
+two minutes from the pinned copy on GitHub; in a clone, deleting a CSV recomputes that step.
 
 
 ## Gradient boosting defaults
