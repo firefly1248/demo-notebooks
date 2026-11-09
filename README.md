@@ -655,3 +655,34 @@ same hyperparameters and gives 1.003.
 
 About four and a half hours on a 14-core laptop CPU; random-forest cross-fitting on 240,000 rows
 dominates. Lower `N_ENTITIES` for a quick run on Colab.
+
+## Classification metrics
+
+| Notebook | Topic | Colab |
+|---|---|---|
+| [classification_metrics_by_decision](notebooks/classification_metrics/classification_metrics_by_decision.ipynb) | Which classification metric answers which decision: expected value, a working point, a fixed review capacity, a cap on one error, review zones, uplift and ranking over the whole list | [open](https://colab.research.google.com/github/firefly1248/demo-notebooks/blob/main/notebooks/classification_metrics/classification_metrics_by_decision.ipynb) |
+
+### classification_metrics_by_decision
+
+Each section takes one decision made from a classifier's output and shows which metric answers it
+and which one misleads. The running example is card fraud with analyst review: 100,000 transactions
+a day, 0.5% of them fraud, a stopped fraud worth 200 and a review costing 5. Scores follow an
+equal-variance binormal model, so TPR, FPR, precision and profit at a threshold have closed forms;
+the notebook computes them analytically and checks them against a simulated day.
+
+A fraud model with ROC AUC 0.97 earns the most, 61,479 a day, by reviewing 2,972 transactions at
+precision 0.128 and F1 0.22; its best-F1 point earns 39,886. The same model trained as if the classes
+were balanced keeps ROC AUC and PR AUC, reviews 52,131 transactions at the same threshold and loses
+160,992, while at its equivalent threshold it selects exactly the same transactions. Two models with
+ROC AUC 0.95 catch 423 and 165 frauds with 450 reviews a day, and which of them is better flips
+between a 0.1% cap on blocked legitimate transactions and a 95% floor on recall. Keeping the error
+rate of automatic decisions under 0.1% takes sending 4.1% of transactions to an analyst. A retention
+example shows a perfectly calibrated churn model saving nobody with 1,000 calls where ranking by the
+effect of the call saves 300.
+
+![which metric answers which decision](figures/classification_metrics/classification_metrics_summary_table.png)
+
+The table is a judgment that sums up the sections, not a computed result.
+
+Written for numpy 2.4, scipy 1.18, scikit-learn 1.9, pandas 3.0 and matplotlib 3.11. Seconds on any
+CPU.
